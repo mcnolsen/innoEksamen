@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import firebase from "firebase/app";
@@ -7,6 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import TimeList from "./components/TimeList";
 import AddTime from "./components/AddTime";
+import Categories from "./components/Categories";
 import { Ionicons } from "react-native-vector-icons";
 import Locations from "./components/Locations";
 const Stack = createStackNavigator();
@@ -18,7 +18,7 @@ export default function App() {
       <Tab.Navigator>
         <Tab.Screen
           name="TimeList"
-          component={StackNavigation}
+          component={TimeList}
           options={{
             title: "Time List",
             tabBarIcon: () => <Ionicons name="list" size={20} />,
@@ -39,6 +39,15 @@ export default function App() {
           component={Locations}
           options={{
             title: "Locations",
+            tabBarIcon: () => <Ionicons name="list" size={20} />,
+            headerShown: null,
+          }}
+        />
+                <Tab.Screen
+          name="Categories"
+          component={Categories}
+          options={{
+            title: "Categories",
             tabBarIcon: () => <Ionicons name="list" size={20} />,
             headerShown: null,
           }}

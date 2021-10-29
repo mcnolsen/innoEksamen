@@ -61,7 +61,7 @@ export default function TimeList({ navigation }) {
           <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
             date.getMonth() + 1
           }-${date.getFullYear()}. Sted: ${item.clinic}, ${
-            location ? location.name : ""
+            location ? location.name : item.location.name
           }. Pris: ${item.price}`}</Text>
           <View style={styles.button}>
             <Button

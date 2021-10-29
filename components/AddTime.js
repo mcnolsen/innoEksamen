@@ -13,6 +13,8 @@ export default function AddTime({ navigation, route }) {
   const [showDate, setShowDate] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
   const [locations, setLocations] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [categories, setCategories] = useState('')
   const changeTextInput = (name, event) => {
     setNewTime({ ...newTime, [name]: event });
   };
@@ -26,7 +28,8 @@ export default function AddTime({ navigation, route }) {
       price.length === 0 ||
       selectedLocation.length === 0 ||
       clinic.length === 0 ||
-      date.length === 0
+      date.length === 0 ||
+      selectedCategory === 0
     ) {
       Alert.alert(
         "Ikke fuldt udfyldt",
@@ -45,6 +48,7 @@ export default function AddTime({ navigation, route }) {
             clinic: clinic,
             status: 1,
             description: description,
+            category: selectedCategory
           });
         Alert.alert(`Gemt`);
         setNewTime(initialState);
@@ -63,17 +67,42 @@ export default function AddTime({ navigation, route }) {
       .equalTo(1)
       .on("value", (snapshot) => {
         const data = snapshot.val();
+        if (data){
+          setSelectedLocation(Object.values(data)[0])
+        }
         setLocations(data);
+      });
+  };
+  const getCategories = () => {
+    //Selects the table/document table
+    let query = firebase.database().ref("/Categories/");
+
+    //Performs the query
+    query
+      .orderByChild("status")
+      .equalTo(1)
+      .on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data){
+          setSelectedCategory(Object.values(data)[0])
+        }
+        setCategories(data);
       });
   };
   useEffect(() => {
     getLocations();
+    getCategories();
   }, []);
 
   //Array with all the objects from the query
   const locationsArray = locations ? Object.values(locations) : false;
   //Array with the keys (id) to the the objects above
   const locationsKeys = locations ? Object.keys(locations) : false;
+
+  //Array with all the objects from the query
+  const categoriesArray = categories ? Object.values(categories) : false;
+  //Array with the keys (id) to the the objects above
+  const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
     <SafeAreaView
       style={{
@@ -112,6 +141,25 @@ export default function AddTime({ navigation, route }) {
             locationsArray.map((e, index) => {
               return (
                 <Picker.Item label={e.name} value={locationsKeys[index]} key={index} />
+              );
+            })
+          ) : (
+            <Picker.Item label="..." />
+          )}
+        </Picker>
+      </View>
+      <View>
+        <Text style={styles.text}>Category:</Text>
+        <Picker
+          onValueChange={(item, index) => {
+            setSelectedCategory(item);
+          }}
+          value={selectedCategory}
+        >
+          {categories ? (
+            categoriesArray.map((e, index) => {
+              return (
+                <Picker.Item label={e.name} value={categoriesKeys[index]} key={index} />
               );
             })
           ) : (
