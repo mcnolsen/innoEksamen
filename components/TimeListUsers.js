@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import firebase from "firebase";
 
-export default function TimeList({ navigation }) {
+export default function TimeListUsers({ navigation }) {
   const [times, setTimes] = useState();
   const [locations, setLocations] = useState([]);
 
@@ -64,14 +64,12 @@ export default function TimeList({ navigation }) {
             location ? location.name : item.location.name
           }. Pris: ${item.price}`}</Text>
           <View style={styles.button}>
-            {/* Vi fjerner button midlertidigt for feedback fra stakeholders
             <Button
               title="Book"
               onPress={() => {
                 confirmBooking(item, index);
               }}
             ></Button>
-            */}
           </View>
         </View>
       );
@@ -83,14 +81,12 @@ export default function TimeList({ navigation }) {
           location ? location.name : ""
         }. Pris: ${item.price}`}</Text>
         <View style={styles.button}>
-          {/* Vi fjerner button midlertidigt for feedback fra stakeholders
           <Button
             title="Book"
             onPress={() => {
               confirmBooking(item, index);
             }}
           ></Button>
-          */}
         </View>
       </View>
     );

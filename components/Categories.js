@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     elevation: 3,
-    backgroundColor: "darkred",
+    backgroundColor: "navy",
     borderRadius: 10,
     height: "25%",
     height: 30,
@@ -131,7 +131,6 @@ const styles = StyleSheet.create({
   buttonTXT: {
     fontSize: 16,
     lineHeight: 21,
-    fontWeight: "bold",
     letterSpacing: 0.25,
     color: "white",
   },

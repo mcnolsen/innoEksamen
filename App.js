@@ -7,6 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import TimeList from "./components/TimeList";
 import AddTime from "./components/AddTime";
 import Categories from "./components/Categories";
+import HomeScreen from "./components/HomeScreen";
 import { Ionicons } from "react-native-vector-icons";
 import Locations from "./components/Locations";
 const Stack = createStackNavigator();
@@ -16,12 +17,23 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
+      {/*Vi tilføjer navigationen for bottom-tabs
+      */}
+      <Tab.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{
+            title: "Home",
+            tabBarIcon: () => <Ionicons name="home" size={20} />,
+            headerShown: null,
+          }}
+        />
         <Tab.Screen
           name="TimeList"
           component={TimeList}
           options={{
             title: "Time List",
-            tabBarIcon: () => <Ionicons name="list" size={20} />,
+            tabBarIcon: () => <Ionicons name="calendar" size={20} />,
             headerShown: null,
           }}
         />
@@ -39,7 +51,7 @@ export default function App() {
           component={Locations}
           options={{
             title: "Locations",
-            tabBarIcon: () => <Ionicons name="list" size={20} />,
+            tabBarIcon: () => <Ionicons name="location-outline" size={20} />,
             headerShown: null,
           }}
         />
@@ -48,7 +60,7 @@ export default function App() {
           component={Categories}
           options={{
             title: "Categories",
-            tabBarIcon: () => <Ionicons name="list" size={20} />,
+            tabBarIcon: () => <Ionicons name="folder" size={20} />,
             headerShown: null,
           }}
         />
