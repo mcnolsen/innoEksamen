@@ -36,6 +36,7 @@ export default function Locations({ navigation, route }) {
   }, []);
   const requestLocationAccess = async () =>{
     let { status } = await Location.requestForegroundPermissionsAsync();
+
     if (status !== "granted") {
       Alert.alert("Permission to access location was denied");
       return;
@@ -121,8 +122,7 @@ export default function Locations({ navigation, route }) {
   if (!accessGranted){
     return(
       <SafeAreaView style={styles.container}>
-        <Text style={styles.label}>Tilladelse af adgang til lokation skal gives, for at kunne oprette en lokation.</Text>
-        <Button title='Giv tilladelse' onPress={()=>{requestLocationAccess()}}/>
+        <Text style={styles.label}>Tilladelse af adgang til lokation skal gives, for at kunne oprette en lokation. Venligst tillad dette</Text>
       {locations ? (
         <FlatList
           data={locationsArray}
