@@ -11,9 +11,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
 import { TextInput } from "react-native-gesture-handler";
+import * as Location from "expo-location";
+
 export default function Locations({ navigation, route }) {
   const [locations, setLocations] = useState();
-  const [newLocation, setNewLocation] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newCity, setNewCity] = useState("");
+  const [newZip, setNewZip] = useState("");
+  const [newAddress, setNewAddress] = useState("");
+  const [accessGranted, setAccessGranted] = useState(false)
+  const [location, setLocation] = useState(null);
   useEffect(() => {
     //Referer til locations tabellen
     let query = firebase.database().ref("/Locations/");
@@ -23,20 +30,49 @@ export default function Locations({ navigation, route }) {
       const data = snapshot.val();
       setLocations(data);
     });
+
+    //Spørger om permission til at bruge lokation
+    requestLocationAccess();
   }, []);
+  const requestLocationAccess = async () =>{
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission to access location was denied");
+      return;
+    }
+    setAccessGranted(true)
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  }
 
   //Opret location i databasen. Skal også referere til et klinik id, som den person der opretter tiden skal være tilknyttet,
   // men dette er ikke vigtigt lige nu for at teste.
-  const createLocation = () => {
-    //Hvis ikke newLocation findes eller hvis længden er 0, vis fejl.
-    if (newLocation.length === 0 || !newLocation) {
-      Alert.alert("Venligst indtast et lokations navn.");
-    } else {
-      firebase.database().ref("/Locations/").push({
-        name: newLocation,
-        status: 1,
-      });
-      Alert.alert("Lokationen er oprettet.");
+  const createLocation = async () => {
+    try {
+      const coordinates = await Location.geocodeAsync(
+        `${newAddress}, ${newZip} ${newCity}`
+      );
+      //Hvis ikke newLocation findes eller hvis længden er 0, vis fejl.
+      if (newName.length === 0 || !newName || newZip.length === 0 || !newZip || newAddress.length === 0 || !newAddress | newCity.length === 0 || !newCity) {
+        Alert.alert("Venligst udfyld alle oplysninger.");
+      } else {
+        firebase
+          .database()
+          .ref("/Locations/")
+          .push({
+            name: newName,
+            addressString: `${newAddress}, ${newZip} ${newCity}`,
+            lon: coordinates[0].longitude,
+            lan: coordinates[0].latitude,
+            status: 1,
+          });
+        Alert.alert("Lokationen er oprettet.");
+      }
+    } catch (err) {
+      if (err) {
+        console.log(err);
+        Alert.alert("Oplysningerne kunne ikke konverteres til koordinater. Venligst prøv igen.");
+      }
     }
   };
   //Bekræftelse af slettelse er nødvendig, så fejl-sletninger ikke sker så ofte.
@@ -81,16 +117,60 @@ export default function Locations({ navigation, route }) {
       </View>
     );
   };
+  //Hvis ikke der er givet tilladelse til lokation
+  if (!accessGranted){
+    return(
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.label}>Tilladelse af adgang til lokation skal gives, for at kunne oprette en lokation.</Text>
+        <Button title='Giv tilladelse' onPress={()=>{requestLocationAccess()}}/>
+      {locations ? (
+        <FlatList
+          data={locationsArray}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => locationsKeys[index]}
+        ></FlatList>
+      ) : (
+        <Text></Text>
+      )}
+    </SafeAreaView>
+    )
+  }
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.label}>Opret lokation:</Text>
+      
+      <Text style={styles.label}>Lokationsnavn:</Text>
       <TextInput
-        value={newLocation}
+        value={newName}
         onChangeText={(e) => {
-          setNewLocation(e);
+          setNewName(e);
         }}
         placeholder="Indtast lokationsnavn..."
       ></TextInput>
+      <Text style={styles.label}>Bynavn:</Text>
+      <TextInput
+        value={newCity}
+        onChangeText={(e) => {
+          setNewCity(e);
+        }}
+        placeholder="Indtast bynavn..."
+      ></TextInput>
+      <Text style={styles.label}>Zip/post kode:</Text>
+      <TextInput
+        value={newZip}
+        onChangeText={(e) => {
+          setNewZip(e);
+        }}
+        placeholder="Indtast zip kode..."
+      ></TextInput>
+      <Text style={styles.label}>Addresse:</Text>
+      <TextInput
+        value={newAddress}
+        onChangeText={(e) => {
+          setNewAddress(e);
+        }}
+        placeholder="Indtast addresse..."
+      ></TextInput>
+
       <Button title="Gem" onPress={() => createLocation()} color="navy" />
       <View style={{ marginTop: 20 }}>
         <Text style={styles.label}>Nuværende lokationer:</Text>
@@ -140,8 +220,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderRadius: 10,
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    marginLeft: "auto",
+    marginRight: "auto",
     marginTop: 5,
     padding: 5,
     width: "90%",
