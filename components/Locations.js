@@ -19,8 +19,8 @@ export default function Locations({ navigation, route }) {
   const [newCity, setNewCity] = useState("");
   const [newZip, setNewZip] = useState("");
   const [newAddress, setNewAddress] = useState("");
+  const [accessGranted, setAccessGranted] = useState(false)
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
   useEffect(() => {
     //Referer til locations tabellen
     let query = firebase.database().ref("/Locations/");
@@ -32,17 +32,18 @@ export default function Locations({ navigation, route }) {
     });
 
     //Spørger om permission til at bruge lokation
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
+    requestLocationAccess();
   }, []);
+  const requestLocationAccess = async () =>{
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission to access location was denied");
+      return;
+    }
+    setAccessGranted(true)
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  }
 
   //Opret location i databasen. Skal også referere til et klinik id, som den person der opretter tiden skal være tilknyttet,
   // men dette er ikke vigtigt lige nu for at teste.
@@ -70,7 +71,7 @@ export default function Locations({ navigation, route }) {
     } catch (err) {
       if (err) {
         console.log(err);
-        setErrorMsg("Oplysningerne kunne ikke konverteres til koordinater. Venligst prøv igen.");
+        Alert.alert("Oplysningerne kunne ikke konverteres til koordinater. Venligst prøv igen.");
       }
     }
   };
@@ -116,8 +117,27 @@ export default function Locations({ navigation, route }) {
       </View>
     );
   };
+  //Hvis ikke der er givet tilladelse til lokation
+  if (!accessGranted){
+    return(
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.label}>Tilladelse af adgang til lokation skal gives, for at kunne oprette en lokation.</Text>
+        <Button title='Giv tilladelse' onPress={()=>{requestLocationAccess()}}/>
+      {locations ? (
+        <FlatList
+          data={locationsArray}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => locationsKeys[index]}
+        ></FlatList>
+      ) : (
+        <Text></Text>
+      )}
+    </SafeAreaView>
+    )
+  }
   return (
     <SafeAreaView style={styles.container}>
+      
       <Text style={styles.label}>Lokationsnavn:</Text>
       <TextInput
         value={newName}
