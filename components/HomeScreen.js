@@ -3,7 +3,7 @@ import { StyleSheet, Button, ImageBackground, TouchableOpacity, SafeAreaView, Im
 
 function HomeScreen (props) {
     return (
-   <ImageBackground style={styles2.container} source={require("../assets/salongro1.jpg")}>
+   <ImageBackground style={styles2.container} source={require("../assets/homeScreenBack.jpg")}>
        <SafeAreaView style={styles2.container}>
       <TouchableOpacity>
       <Image style={imageStyle.constainer}
