@@ -6,6 +6,12 @@ import firebase from "firebase";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 
+//Global Styles import
+import GlobalStyles from "../styles/GlobalStyles";
+/*
+Eksempel på brug af styles
+<View style={GlobalStyles.container}></View>
+*/
 export default function AddTime({ navigation, route }) {
   const initialState = { time: "", price: "", description: "" };
   const [newTime, setNewTime] = useState(initialState);
