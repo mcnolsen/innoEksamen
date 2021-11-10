@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet, Button, Alert, ImageBackground,  } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Button,
+  Alert,
+  ImageBackground,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import firebase from "firebase";
@@ -10,18 +18,18 @@ export default function TimeList({ navigation }) {
 
   useEffect(() => {
     if (!times) {
-      //Selects the table/document table
+      //Vælger tabellen/dokument tabellen
       let query = firebase.database().ref("/Times/");
-
       //Performs the query
       query
         .orderByChild("status")
         .equalTo(1)
         .on("value", (snapshot) => {
           const data = snapshot.val();
-          setTimes(data);
+            setTimes(data)
         });
-
+    }
+    if (!locations) {
       //Finder locations
       let queryLocation = firebase.database().ref(`/Locations/`);
       queryLocation.on("value", (snapshot) => {
@@ -33,8 +41,12 @@ export default function TimeList({ navigation }) {
     [];
 
   if (!times) {
-    //If no times, return here and end the function.
-    return <Text>Ingen tilgængelige tider.</Text>;
+    //Hvis ingen tider, return.
+    return (
+      <SafeAreaView>
+        <Text>Ingen tilgængelige tider.</Text>
+      </SafeAreaView>
+    );
   }
   //Array with all the objects from the query
   const timesArray = Object.values(times);
@@ -61,7 +73,7 @@ export default function TimeList({ navigation }) {
           <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
             date.getMonth() + 1
           }-${date.getFullYear()}. Sted: ${item.clinic}, ${
-            location ? location.name : item.location.name
+            location ? location.addressString : item.location.name
           }. Pris: ${item.price}`}</Text>
           <View style={styles.button}>
             {/* Vi fjerner button midlertidigt for feedback fra stakeholders
@@ -77,7 +89,6 @@ export default function TimeList({ navigation }) {
       );
     }
     return (
-    
       <View style={styles.container}>
         <Text>{`Tid: ${item.time}. Sted: ${item.clinic}, ${
           location ? location.name : ""
@@ -117,16 +128,17 @@ export default function TimeList({ navigation }) {
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   return (
-    <ImageBackground style={styles2.container} source={require("../assets/salongro1.jpg")}>
-    <SafeAreaView style={{height: "100%"}}>
-  
-
-      <FlatList 
-        data={timesArray}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => timesKeys[index]}
-      ></FlatList>
-    </SafeAreaView>
+    <ImageBackground
+      style={styles2.container}
+      source={require("../assets/salongro1.jpg")}
+    >
+      <SafeAreaView style={{ height: "100%" }}>
+        <FlatList
+          data={timesArray}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => timesKeys[index]}
+        ></FlatList>
+      </SafeAreaView>
     </ImageBackground>
   );
 }
