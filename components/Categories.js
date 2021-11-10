@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
 import { TextInput } from "react-native-gesture-handler";
+
 export default function Categories({ navigation, route }) {
   const [categories, setCategories] = useState();
   const [newCategory, setNewCategory] = useState("");

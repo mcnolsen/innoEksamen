@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  FlatList,
-  Pressable,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, Button, FlatList, Pressable, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
 import { TextInput } from "react-native-gesture-handler";
 import * as Location from "expo-location";
+import GlobalStyles from "../styles/GlobalStyles";
 
 export default function Locations({ navigation, route }) {
   const [locations, setLocations] = useState();
@@ -103,16 +96,16 @@ export default function Locations({ navigation, route }) {
   //Render item required for flatlist. Shows how to render each item in the list.
   const renderItem = ({ item, index }) => {
     return (
-      <View style={styles.listItem}>
+      <View style={GlobalStyles.listItem}>
         <Text>{item.name}</Text>
-        <View style={styles.button}>
+        <View style={GlobalStyles.button}>
           <Pressable
             onPress={() => {
               confirmDelete(item, index);
             }}
-            style={styles.button}
+            style={GlobalStyles.button}
           >
-            <Text style={styles.buttonTXT}>Slet</Text>
+            <Text style={GlobalStyles.buttonText}>Slet</Text>
           </Pressable>
         </View>
       </View>
@@ -121,8 +114,8 @@ export default function Locations({ navigation, route }) {
   //Hvis ikke der er givet tilladelse til lokation
   if (!accessGranted){
     return(
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.label}>Tilladelse af adgang til lokation skal gives, for at kunne oprette en lokation. Venligst tillad dette</Text>
+      <SafeAreaView style={GlobalStyles.container}>
+        <Text style={GlobalStyles.label}>Tilladelse af adgang til lokation skal gives, for at kunne oprette en lokation. Venligst tillad dette</Text>
       {locations ? (
         <FlatList
           data={locationsArray}
@@ -136,9 +129,9 @@ export default function Locations({ navigation, route }) {
     )
   }
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={GlobalStyles.container}>
       
-      <Text style={styles.label}>Lokationsnavn:</Text>
+      <Text style={GlobalStyles.label}>Lokationsnavn:</Text>
       <TextInput
         value={newName}
         onChangeText={(e) => {
@@ -146,7 +139,7 @@ export default function Locations({ navigation, route }) {
         }}
         placeholder="Indtast lokationsnavn..."
       ></TextInput>
-      <Text style={styles.label}>Bynavn:</Text>
+      <Text style={GlobalStyles.label}>Bynavn:</Text>
       <TextInput
         value={newCity}
         onChangeText={(e) => {
@@ -154,7 +147,7 @@ export default function Locations({ navigation, route }) {
         }}
         placeholder="Indtast bynavn..."
       ></TextInput>
-      <Text style={styles.label}>Zip/post kode:</Text>
+      <Text style={GlobalStyles.label}>Zip/post kode:</Text>
       <TextInput
         value={newZip}
         onChangeText={(e) => {
@@ -162,7 +155,7 @@ export default function Locations({ navigation, route }) {
         }}
         placeholder="Indtast zip kode..."
       ></TextInput>
-      <Text style={styles.label}>Addresse:</Text>
+      <Text style={GlobalStyles.label}>Addresse:</Text>
       <TextInput
         value={newAddress}
         onChangeText={(e) => {
@@ -171,9 +164,10 @@ export default function Locations({ navigation, route }) {
         placeholder="Indtast addresse..."
       ></TextInput>
 
-      <Button title="Gem" onPress={() => createLocation()} color="navy" />
+      <Button title="Gem" onPress={() => createLocation()} color="black" />
+
       <View style={{ marginTop: 20 }}>
-        <Text style={styles.label}>Nuværende lokationer:</Text>
+        <Text style={GlobalStyles.label}>Nuværende lokationer:</Text>
       </View>
       {locations ? (
         <FlatList
@@ -188,6 +182,7 @@ export default function Locations({ navigation, route }) {
   );
 }
 
+/*
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -228,3 +223,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+*/

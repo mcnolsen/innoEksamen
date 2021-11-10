@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
+import GlobalStyles from "../styles/GlobalStyles";
 
 /*//Global Styles import
 import GlobalStyles from "../styles/GlobalStyles";
@@ -120,7 +121,7 @@ export default function AddTime({ navigation, route }) {
     >
       {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
       <View>
-        <Text style={styles.text}>Date:</Text>
+        <Text style={GlobalStyles.text}>Date:</Text>
         <Text
           style={{ marginLeft: "auto", marginRight: "auto" }}
         >{` ${date.getDate()}/${
@@ -130,13 +131,13 @@ export default function AddTime({ navigation, route }) {
           onPress={() => {
             setShowDate(true);
           }}
-          style={styles.button}
+          style={GlobalStyles.button}
         >
-          <Text style={styles.buttonTXT}>Vælg Dato</Text>
+          <Text style={GlobalStyles.buttonText}>Vælg Dato</Text>
         </Pressable>
       </View>
       <View>
-        <Text style={styles.text}>Location:</Text>
+        <Text style={GlobalStyles.text}>Location:</Text>
         <Picker
           onValueChange={(item, index) => {
             setSelectedLocation(item);
@@ -155,7 +156,7 @@ export default function AddTime({ navigation, route }) {
         </Picker>
       </View>
       <View>
-        <Text style={styles.text}>Category:</Text>
+        <Text style={GlobalStyles.text}>Category:</Text>
         <Picker
           onValueChange={(item, index) => {
             setSelectedCategory(item);
@@ -191,7 +192,7 @@ export default function AddTime({ navigation, route }) {
         return (
           <View key={index}>
             {/* Laver det først bogstav til uppercase, så det ser ordentligt ud */}
-            <Text style={styles.text}>
+            <Text style={GlobalStyles.text}>
               {`${attribute.charAt(0).toUpperCase()}${attribute.slice(1)}`}:
             </Text>
             <TextInput
@@ -203,13 +204,14 @@ export default function AddTime({ navigation, route }) {
           </View>
         );
       })}
-      <View styles={styles.button}>
+      <View styles={GlobalStyles.button}>
         <Button title="Save" onPress={() => handleSave()} color="navy" />
       </View>
     </SafeAreaView>
   );
 }
 
+/*
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
@@ -236,3 +238,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+*/
