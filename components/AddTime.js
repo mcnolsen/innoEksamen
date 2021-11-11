@@ -22,8 +22,8 @@ import GlobalStyles from "../styles/GlobalStyles";
 */
 export default function AddTime({ navigation, route }) {
   const [date, setNewDate] = useState(new Date());
-  const [showDate, setShowDate] = useState(false);
-  const [showTime, setShowTime] = useState(false);
+  const [showDate, setShowDate] = useState(Platform.OS === 'ios');
+  const [showTime, setShowTime] = useState(Platform.OS === 'ios');
 
   const [locations, setLocations] = useState("");
   const [categories, setCategories] = useState("");
