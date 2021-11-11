@@ -161,6 +161,37 @@ export default function AddTime({ navigation, route }) {
           <Text style={styles.buttonTXT}>Vælg Tid</Text>
         </Pressable>
       </View>
+            {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
+            {showDate ? (
+        <DateTimePicker
+          value={date}
+          onChange={(e, chosenDate) => {
+            //Hvis der vælges et input, og ikke trykkes annuller
+            if (chosenDate){
+              setNewDate(chosenDate);
+            }
+            setShowDate(false);
+          }}
+          mode="datetime"
+        />
+      ) : (
+        <View></View>
+      )}
+      {showTime ? (
+        <DateTimePicker
+          value={time}
+          onChange={(e, chosenTime) => {
+            //Hvis der vælges et input, og ikke trykkes annuller
+            if(chosenTime){
+              setTime(chosenTime);
+            }
+            setShowTime(false);
+          }}
+          mode="time"
+        />
+      ) : (
+        <View></View>
+      )}
       <View>
         <Text style={styles.text}>Lokation:</Text>
         <Picker
@@ -207,37 +238,6 @@ export default function AddTime({ navigation, route }) {
           )}
         </Picker>
       </View>
-      {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
-      {showDate ? (
-        <DateTimePicker
-          value={date}
-          onChange={(e, chosenDate) => {
-            //Hvis der vælges et input, og ikke trykkes annuller
-            if (chosenDate){
-              setNewDate(chosenDate);
-            }
-            setShowDate(false);
-          }}
-          mode="datetime"
-        />
-      ) : (
-        <View></View>
-      )}
-      {showTime ? (
-        <DateTimePicker
-          value={time}
-          onChange={(e, chosenTime) => {
-            //Hvis der vælges et input, og ikke trykkes annuller
-            if(chosenTime){
-              setTime(chosenTime);
-            }
-            setShowTime(false);
-          }}
-          mode="time"
-        />
-      ) : (
-        <View></View>
-      )}
       <View>
         <Text style={styles.text}>Pris:</Text>
         <TextInput
