@@ -80,10 +80,11 @@ export default function AddTime({ navigation, route }) {
   const clearInformation = () => {
     setPrice("");
     setDiscountPrice("");
-    setTime("");
     setDescription("");
     const today = new Date();
     setNewDate(today);
+    setTime(today);
+
   };
   const getLocations = () => {
     //Vælger tabellen/dokument tabellen
@@ -192,7 +193,7 @@ export default function AddTime({ navigation, route }) {
             onValueChange={(item, index) => {
               setSelectedLocation(item);
             }}
-            value={selectedLocation}
+            selectedValue={selectedLocation}
           >
             {locations ? (
               locationsArray.map((e, index) => {
@@ -215,7 +216,7 @@ export default function AddTime({ navigation, route }) {
             onValueChange={(item, index) => {
               setSelectedCategory(item);
             }}
-            value={selectedCategory}
+            selectedValue={selectedCategory}
           >
             {categories ? (
               categoriesArray.map((e, index) => {
@@ -233,7 +234,7 @@ export default function AddTime({ navigation, route }) {
           </Picker>
         </View>
         <View>
-          <Text style={styles.text}>Pris:</Text>
+          <Text style={styles.text}>Normal pris:</Text>
           <TextInput
             value={price}
             onChangeText={(e) => {

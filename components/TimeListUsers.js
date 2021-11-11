@@ -9,14 +9,31 @@ import {
   ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as Location from "expo-location";
+
+import { getDistance } from 'geolib';
 
 import firebase from "firebase";
 
 export default function TimeListUsers({ navigation }) {
   const [times, setTimes] = useState();
   const [locations, setLocations] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
+  const [timesWithDistance, setTimesWithDistance] = useState();
 
   useEffect(() => {
+
+    const requestLocationAccess = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
+        return;
+      }
+      let userLocation = await Location.getCurrentPositionAsync({});
+      setUserLocation(userLocation);
+    }
+    requestLocationAccess();
     if (!times) {
       //Vælger tabellen/dokument tabellen
       let query = firebase.database().ref("/Times/");
@@ -25,8 +42,18 @@ export default function TimeListUsers({ navigation }) {
         .orderByChild("status")
         .equalTo(1)
         .on("value", (snapshot) => {
-          const data = snapshot.val();
-            setTimes(data)
+          let data = snapshot.val();
+          if (userLocation){
+            let dataValues = Object.values(data);
+            let dataDistance = dataValues.map((el)=> ({
+              ...el,
+              distance: el.location.lon && el.location.lan ? getDistance({longitude: userLocation.coords.longitude, latitude:userLocation.coords.latitude}, {longitude: el.location.lon, latitude:el.location.lan}) : false
+            }))
+
+            setTimesWithDistance(dataDistance)
+          }
+          setTimes(data)
+
         });
     }
   }),
@@ -40,8 +67,6 @@ export default function TimeListUsers({ navigation }) {
       </SafeAreaView>
     );
   }
-  //Array with all the objects from the query
-  const timesArray = Object.values(times);
   //Array with the keys (id) to the the objects above
   const timesKeys = Object.keys(times);
 
@@ -57,7 +82,7 @@ export default function TimeListUsers({ navigation }) {
             date.getMonth() + 1
           }-${date.getFullYear()}. Sted: ${
             item.location.addressString ? item.location.addressString : item.clinic
-          }. Udbyder: ${item.clinic}. Pris: ${item.price}`}</Text>
+          }. Udbyder: ${item.clinic}. Pris: ${item.price}. Distance: ${item.distance ? `${item.distance}m` : `Kan ikke findes.`}`}</Text>
           <View style={styles.button}>
             {/* Vi fjerner button midlertidigt for feedback fra stakeholders
             <Button
@@ -117,7 +142,7 @@ export default function TimeListUsers({ navigation }) {
     >
       <SafeAreaView style={{ height: "100%" }}>
         <FlatList
-          data={timesArray}
+          data={timesWithDistance}
           renderItem={renderItem}
           keyExtractor={(item, index) => timesKeys[index]}
         ></FlatList>
