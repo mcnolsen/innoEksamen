@@ -124,6 +124,7 @@ export default function AddTime({ navigation, route }) {
   //Array with the keys (id) to the the objects above
   const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
+    <ScrollView>
     <SafeAreaView
       style={{
         width: "80%",
@@ -132,7 +133,6 @@ export default function AddTime({ navigation, route }) {
         marginTop: 10,
       }}
     >
-      <ScrollView>
       {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
       <View>
         <Text style={styles.text}>Dato og Tid:</Text>
@@ -151,7 +151,7 @@ export default function AddTime({ navigation, route }) {
         </Pressable>
         <Text
           style={{ marginLeft: "auto", marginRight: "auto" }}
-        >{`${time.getHours() < 10 ? `0${time.getHours()}` : time.getHours()}:${time.getMinutes()}`}</Text>
+        >{`${time.getHours() < 10 ? `0${time.getHours()}` : time.getHours()}:${time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes()}`}</Text>
         <Pressable
           onPress={() => {
             setShowTime(true);
@@ -255,15 +255,6 @@ export default function AddTime({ navigation, route }) {
         />
       </View>
       <View>
-        <Text style={styles.text}>Tid:</Text>
-        <TextInput
-          value={time}
-          onChangeText={(e) => {
-            setTime(e);
-          }}
-        />
-      </View>
-      <View>
         <Text style={styles.text}>Beskrivelse:</Text>
         <TextInput
           value={description}
@@ -276,8 +267,9 @@ export default function AddTime({ navigation, route }) {
       <View styles={styles.button}>
         <Button title="Save" onPress={() => handleSave()} color="navy" />
       </View>
-      </ScrollView>
     </SafeAreaView>
+    </ScrollView>
+
   );
 }
 
