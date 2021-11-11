@@ -13,19 +13,22 @@ import GlobalStyles from "../styles/GlobalStyles";
 <View style={GlobalStyles.container}></View>
 */
 export default function AddTime({ navigation, route }) {
-  const initialState = { time: "", price: "", description: "" };
-  const [newTime, setNewTime] = useState(initialState);
   const [date, setNewDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("");
+  const [showTime, setShowTime] = useState(false);
+
   const [locations, setLocations] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [categories, setCategories] = useState('')
-  const changeTextInput = (name, event) => {
-    setNewTime({ ...newTime, [name]: event });
-  };
+  const [categories, setCategories] = useState("");
+
+  //Inputs
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [price, setPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [time, setTime] = useState(new Date());
+  const [description, setDescription] = useState("");
+
   const handleSave = () => {
-    const { time, price, description } = newTime;
     //Grund til clinic er hardcoded, er at det egentligt skal hentes fra den klinik,
     // som er logget ind. Der er bare ikke grund til at implementere det her i testen.
     const clinic = "Test Clinic";
@@ -35,7 +38,8 @@ export default function AddTime({ navigation, route }) {
       selectedLocation.length === 0 ||
       clinic.length === 0 ||
       date.length === 0 ||
-      selectedCategory === 0
+      selectedCategory === 0 ||
+      discountPrice.length === 0
     ) {
       Alert.alert(
         "Ikke fuldt udfyldt",
@@ -50,31 +54,41 @@ export default function AddTime({ navigation, route }) {
             date: `${date}`,
             time: time,
             price: price,
+            discountPrice: discountPrice,
             location: selectedLocation,
             clinic: clinic,
             status: 1,
             description: description,
-            category: selectedCategory
+            category: selectedCategory,
           });
         Alert.alert(`Gemt`);
-        setNewTime(initialState);
+        clearInformation();
       } catch (error) {
         console.log(`Error: ${error.message}`);
       }
     }
   };
+  //Fjerner inputs
+  const clearInformation = () => {
+    setPrice("");
+    setDiscountPrice("");
+    setTime("");
+    setDescription("");
+    const today = new Date();
+    setNewDate(today);
+  };
   const getLocations = () => {
-    //Selects the table/document table
+    //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Locations/");
 
-    //Performs the query
+    //Performer queryen
     query
       .orderByChild("status")
       .equalTo(1)
       .on("value", (snapshot) => {
         const data = snapshot.val();
-        if (data){
-          setSelectedLocation(Object.values(data)[0])
+        if (data) {
+          setSelectedLocation(Object.values(data)[0]);
         }
         setLocations(data);
       });
@@ -89,8 +103,8 @@ export default function AddTime({ navigation, route }) {
       .equalTo(1)
       .on("value", (snapshot) => {
         const data = snapshot.val();
-        if (data){
-          setSelectedCategory(Object.values(data)[0])
+        if (data) {
+          setSelectedCategory(Object.values(data)[0]);
         }
         setCategories(data);
       });
@@ -118,9 +132,10 @@ export default function AddTime({ navigation, route }) {
         marginTop: 10,
       }}
     >
+      <ScrollView>
       {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
       <View>
-        <Text style={styles.text}>Date:</Text>
+        <Text style={styles.text}>Dato og Tid:</Text>
         <Text
           style={{ marginLeft: "auto", marginRight: "auto" }}
         >{` ${date.getDate()}/${
@@ -134,9 +149,20 @@ export default function AddTime({ navigation, route }) {
         >
           <Text style={styles.buttonTXT}>Vælg Dato</Text>
         </Pressable>
+        <Text
+          style={{ marginLeft: "auto", marginRight: "auto" }}
+        >{`${time.getHours() < 10 ? `0${time.getHours()}` : time.getHours()}:${time.getMinutes()}`}</Text>
+        <Pressable
+          onPress={() => {
+            setShowTime(true);
+          }}
+          style={styles.button}
+        >
+          <Text style={styles.buttonTXT}>Vælg Tid</Text>
+        </Pressable>
       </View>
       <View>
-        <Text style={styles.text}>Location:</Text>
+        <Text style={styles.text}>Lokation:</Text>
         <Picker
           onValueChange={(item, index) => {
             setSelectedLocation(item);
@@ -146,7 +172,11 @@ export default function AddTime({ navigation, route }) {
           {locations ? (
             locationsArray.map((e, index) => {
               return (
-                <Picker.Item label={e.name} value={locationsKeys[index]} key={index} />
+                <Picker.Item
+                  label={e.name}
+                  value={locationsKeys[index]}
+                  key={index}
+                />
               );
             })
           ) : (
@@ -155,7 +185,7 @@ export default function AddTime({ navigation, route }) {
         </Picker>
       </View>
       <View>
-        <Text style={styles.text}>Category:</Text>
+        <Text style={styles.text}>Kategori:</Text>
         <Picker
           onValueChange={(item, index) => {
             setSelectedCategory(item);
@@ -165,7 +195,11 @@ export default function AddTime({ navigation, route }) {
           {categories ? (
             categoriesArray.map((e, index) => {
               return (
-                <Picker.Item label={e.name} value={categoriesKeys[index]} key={index} />
+                <Picker.Item
+                  label={e.name}
+                  value={categoriesKeys[index]}
+                  key={index}
+                />
               );
             })
           ) : (
@@ -178,34 +212,71 @@ export default function AddTime({ navigation, route }) {
         <DateTimePicker
           value={date}
           onChange={(e, chosenDate) => {
-            setNewDate(chosenDate);
+            //Hvis der vælges et input, og ikke trykkes annuller
+            if (chosenDate){
+              setNewDate(chosenDate);
+            }
             setShowDate(false);
           }}
-          mode="date"
+          mode="datetime"
         />
       ) : (
         <View></View>
       )}
-      {/* Viser de forskellige inputfelter og deres navne*/}
-      {Object.keys(initialState).map((attribute, index) => {
-        return (
-          <View key={index}>
-            {/* Laver det først bogstav til uppercase, så det ser ordentligt ud */}
-            <Text style={styles.text}>
-              {`${attribute.charAt(0).toUpperCase()}${attribute.slice(1)}`}:
-            </Text>
-            <TextInput
-              value={newTime[attribute]}
-              onChangeText={(event) => {
-                changeTextInput(attribute, event);
-              }}
-            />
-          </View>
-        );
-      })}
+      {showTime ? (
+        <DateTimePicker
+          value={time}
+          onChange={(e, chosenTime) => {
+            //Hvis der vælges et input, og ikke trykkes annuller
+            if(chosenTime){
+              setTime(chosenTime);
+            }
+            setShowTime(false);
+          }}
+          mode="time"
+        />
+      ) : (
+        <View></View>
+      )}
+      <View>
+        <Text style={styles.text}>Pris:</Text>
+        <TextInput
+          value={price}
+          onChangeText={(e) => {
+            setPrice(e);
+          }}
+        />
+        <Text style={styles.text}>Rabat pris:</Text>
+        <TextInput
+          value={discountPrice}
+          onChangeText={(e) => {
+            setDiscountPrice(e);
+          }}
+        />
+      </View>
+      <View>
+        <Text style={styles.text}>Tid:</Text>
+        <TextInput
+          value={time}
+          onChangeText={(e) => {
+            setTime(e);
+          }}
+        />
+      </View>
+      <View>
+        <Text style={styles.text}>Beskrivelse:</Text>
+        <TextInput
+          value={description}
+          onChangeText={(e) => {
+            setDescription(e);
+          }}
+        />
+      </View>
+
       <View styles={styles.button}>
         <Button title="Save" onPress={() => handleSave()} color="navy" />
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -221,6 +292,7 @@ const styles = StyleSheet.create({
     backgroundColor: "navy",
     borderRadius: 10,
     height: "25%",
+    flex: 2
   },
   buttonTXT: {
     fontSize: 16,
