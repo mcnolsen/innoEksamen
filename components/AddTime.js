@@ -124,7 +124,7 @@ export default function AddTime({ navigation, route }) {
   //Array with the keys (id) to the the objects above
   const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
-    <ScrollView>
+    <ScrollView style={{width: "100%"}}>
     <SafeAreaView
       style={{
         width: "80%",
