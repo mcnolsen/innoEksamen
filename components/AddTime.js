@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Alert, Button, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Alert,
+  Button,
+  StyleSheet,
+  Pressable,
+  Platform,
+} from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
@@ -124,154 +132,200 @@ export default function AddTime({ navigation, route }) {
   //Array with the keys (id) to the the objects above
   const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
-    <ScrollView style={{width: "100%"}}>
-    <SafeAreaView
-      style={{
-        width: "80%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        marginTop: 10,
-      }}
-    >
-      {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
+    <ScrollView style={{ width: "100%" }}>
+      <SafeAreaView
+        style={{
+          width: "80%",
+          marginLeft: "auto",
+          marginRight: "auto",
+          marginTop: 10,
+        }}
+      >
+        {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
+
+        <View>
+          <DateAndTimeComponent
+            showDate={showDate}
+            showTime={showTime}
+            setShowDate={setShowDate}
+            setShowTime={setShowTime}
+            time={time}
+            date={date}
+          />
+        </View>
+
+        {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
+        {showDate ? (
+          <DateTimePicker
+            value={date}
+            onChange={(e, chosenDate) => {
+              //Hvis der vælges et input, og ikke trykkes annuller
+              if (chosenDate) {
+                setNewDate(chosenDate);
+              }
+              //Hvis ios, så går den væk. Ellers ikke. På ios vises det anderledes, derfor er det vigtigt.
+              setShowDate(Platform.OS === "ios");
+            }}
+            mode="datetime"
+          />
+        ) : (
+          <View></View>
+        )}
+        {showTime ? (
+          <DateTimePicker
+            value={time}
+            onChange={(e, chosenTime) => {
+              //Hvis der vælges et input, og ikke trykkes annuller
+              if (chosenTime) {
+                setTime(chosenTime);
+              }
+              setShowTime(Platform.OS === "ios");
+            }}
+            mode="time"
+          />
+        ) : (
+          <View></View>
+        )}
+        <View>
+          <Text style={styles.text}>Lokation:</Text>
+          <Picker
+            onValueChange={(item, index) => {
+              setSelectedLocation(item);
+            }}
+            value={selectedLocation}
+          >
+            {locations ? (
+              locationsArray.map((e, index) => {
+                return (
+                  <Picker.Item
+                    label={e.name}
+                    value={locationsKeys[index]}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <Picker.Item label="..." />
+            )}
+          </Picker>
+        </View>
+        <View>
+          <Text style={styles.text}>Kategori:</Text>
+          <Picker
+            onValueChange={(item, index) => {
+              setSelectedCategory(item);
+            }}
+            value={selectedCategory}
+          >
+            {categories ? (
+              categoriesArray.map((e, index) => {
+                return (
+                  <Picker.Item
+                    label={e.name}
+                    value={categoriesKeys[index]}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <Picker.Item label="..." />
+            )}
+          </Picker>
+        </View>
+        <View>
+          <Text style={styles.text}>Pris:</Text>
+          <TextInput
+            value={price}
+            onChangeText={(e) => {
+              setPrice(e);
+            }}
+            placeholder="Indsæt pris før rabat..."
+          />
+          <Text style={styles.text}>Rabat pris:</Text>
+          <TextInput
+            value={discountPrice}
+            onChangeText={(e) => {
+              setDiscountPrice(e);
+            }}
+            placeholder="Indsæt pris efter rabat..."
+          />
+        </View>
+        <View>
+          <Text style={styles.text}>Beskrivelse:</Text>
+          <TextInput
+            value={description}
+            onChangeText={(e) => {
+              setDescription(e);
+            }}
+            placeholder="Indsæt eventuelt en beskrivelse..."
+          />
+        </View>
+
+        <View styles={styles.button}>
+          <Button title="Save" onPress={() => handleSave()} color="navy" />
+        </View>
+      </SafeAreaView>
+    </ScrollView>
+  );
+}
+
+const DateAndTimeComponent = (props) => {
+  const { setShowTime, setShowDate, showDate, showTime, time, date } = props;
+  if (Platform.OS === "ios") {
+    return (
       <View>
         <Text style={styles.text}>Dato og Tid:</Text>
-        <Text
-          style={{ marginLeft: "auto", marginRight: "auto" }}
-        >{` ${date.getDate()}/${
-          date.getMonth() + 1
-        }-${date.getFullYear()}`}</Text>
-        <Pressable
+        {showDate ?  <Text></Text> : <Pressable
           onPress={() => {
             setShowDate(true);
           }}
           style={styles.button}
         >
           <Text style={styles.buttonTXT}>Vælg Dato</Text>
-        </Pressable>
-        <Text
-          style={{ marginLeft: "auto", marginRight: "auto" }}
-        >{`${time.getHours() < 10 ? `0${time.getHours()}` : time.getHours()}:${time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes()}`}</Text>
-        <Pressable
+        </Pressable>}
+        {showTime ? <Text></Text> : <Pressable
           onPress={() => {
             setShowTime(true);
           }}
           style={styles.button}
         >
           <Text style={styles.buttonTXT}>Vælg Tid</Text>
-        </Pressable>
+        </Pressable>}
       </View>
-            {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
-            {showDate ? (
-        <DateTimePicker
-          value={date}
-          onChange={(e, chosenDate) => {
-            //Hvis der vælges et input, og ikke trykkes annuller
-            if (chosenDate){
-              setNewDate(chosenDate);
-            }
-            setShowDate(false);
-          }}
-          mode="datetime"
-        />
-      ) : (
-        <View></View>
-      )}
-      {showTime ? (
-        <DateTimePicker
-          value={time}
-          onChange={(e, chosenTime) => {
-            //Hvis der vælges et input, og ikke trykkes annuller
-            if(chosenTime){
-              setTime(chosenTime);
-            }
-            setShowTime(false);
-          }}
-          mode="time"
-        />
-      ) : (
-        <View></View>
-      )}
-      <View>
-        <Text style={styles.text}>Lokation:</Text>
-        <Picker
-          onValueChange={(item, index) => {
-            setSelectedLocation(item);
-          }}
-          value={selectedLocation}
-        >
-          {locations ? (
-            locationsArray.map((e, index) => {
-              return (
-                <Picker.Item
-                  label={e.name}
-                  value={locationsKeys[index]}
-                  key={index}
-                />
-              );
-            })
-          ) : (
-            <Picker.Item label="..." />
-          )}
-        </Picker>
-      </View>
-      <View>
-        <Text style={styles.text}>Kategori:</Text>
-        <Picker
-          onValueChange={(item, index) => {
-            setSelectedCategory(item);
-          }}
-          value={selectedCategory}
-        >
-          {categories ? (
-            categoriesArray.map((e, index) => {
-              return (
-                <Picker.Item
-                  label={e.name}
-                  value={categoriesKeys[index]}
-                  key={index}
-                />
-              );
-            })
-          ) : (
-            <Picker.Item label="..." />
-          )}
-        </Picker>
-      </View>
-      <View>
-        <Text style={styles.text}>Pris:</Text>
-        <TextInput
-          value={price}
-          onChangeText={(e) => {
-            setPrice(e);
-          }}
-        />
-        <Text style={styles.text}>Rabat pris:</Text>
-        <TextInput
-          value={discountPrice}
-          onChangeText={(e) => {
-            setDiscountPrice(e);
-          }}
-        />
-      </View>
-      <View>
-        <Text style={styles.text}>Beskrivelse:</Text>
-        <TextInput
-          value={description}
-          onChangeText={(e) => {
-            setDescription(e);
-          }}
-        />
-      </View>
-
-      <View styles={styles.button}>
-        <Button title="Save" onPress={() => handleSave()} color="navy" />
-      </View>
-    </SafeAreaView>
-    </ScrollView>
-
+    );
+  }
+  return (
+    <View>
+      <Text style={styles.text}>Dato og Tid:</Text>
+      <Text
+        style={{ marginLeft: "auto", marginRight: "auto" }}
+      >{` ${date.getDate()}/${
+        date.getMonth() + 1
+      }-${date.getFullYear()}`}</Text>
+      <Pressable
+        onPress={() => {
+          setShowDate(true);
+        }}
+        style={styles.button}
+      >
+        <Text style={styles.buttonTXT}>Vælg Dato</Text>
+      </Pressable>
+      <Text style={{ marginLeft: "auto", marginRight: "auto" }}>{`${
+        time.getHours() < 10 ? `0${time.getHours()}` : time.getHours()
+      }:${
+        time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes()
+      }`}</Text>
+      <Pressable
+        onPress={() => {
+          setShowTime(true);
+        }}
+        style={styles.button}
+      >
+        <Text style={styles.buttonTXT}>Vælg Tid</Text>
+      </Pressable>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   button: {
@@ -284,7 +338,7 @@ const styles = StyleSheet.create({
     backgroundColor: "navy",
     borderRadius: 10,
     height: "25%",
-    flex: 2
+    flex: 2,
   },
   buttonTXT: {
     fontSize: 16,
