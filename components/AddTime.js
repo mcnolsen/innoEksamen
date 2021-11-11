@@ -166,7 +166,7 @@ export default function AddTime({ navigation, route }) {
               //Hvis ios, så går den væk. Ellers ikke. På ios vises det anderledes, derfor er det vigtigt.
               setShowDate(Platform.OS === "ios");
             }}
-            mode="datetime"
+            mode="date"
           />
         ) : (
           <View></View>
