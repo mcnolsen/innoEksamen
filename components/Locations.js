@@ -166,7 +166,7 @@ export default function Locations({ navigation, route }) {
         placeholder="Indtast addresse..."
       ></TextInput>
 
-      <Button title="Gem" onPress={() => createLocation()} color="black" />
+      <Button title="Gem" onPress={() => createLocation()} color="#333" />
 
       <View style={{ marginTop: 20 }}>
         <Text style={GlobalStyles.label}>Nuværende lokationer:</Text>

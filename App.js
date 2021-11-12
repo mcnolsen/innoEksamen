@@ -11,6 +11,7 @@ import { Ionicons } from "react-native-vector-icons";
 import Locations from "./components/Locations";
 import TimeListUsers from "./components/TimeListUsers";
 
+
 //For stack navigator. Ved ikke om vi vil anvende dette.
 import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();

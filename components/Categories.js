@@ -86,7 +86,7 @@ export default function Categories({ navigation, route }) {
         }}
         placeholder="Indtast kategori navn..."
       ></TextInput>
-      <Button title="Gem" onPress={() => createCategory()} color="#025156" />
+      <Button title="Gem" onPress={() => createCategory()} color="#333" />
       <View style={{ marginTop: 20 }}>
         <Text style={GlobalStyles.label}>Nuværende Kategorier:</Text>
       </View>

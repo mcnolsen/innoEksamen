@@ -7,7 +7,7 @@ const GlobalStyles = StyleSheet.create({
         marginRight: 0,
         padding: 30,
         marginBottom: 0,
-        backgroundColor: "#bad7d4",
+        backgroundColor: "#c1dbd8",
         textAlign: "center",
     },
     titleText: {
@@ -30,7 +30,7 @@ const GlobalStyles = StyleSheet.create({
         marginLeft: "auto",
         marginRight: "auto",
         elevation: 3,
-        backgroundColor: "#025156",
+        backgroundColor: "#059095",
         borderRadius: 10,
         height: "25%",
         height: 30,
