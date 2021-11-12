@@ -182,7 +182,7 @@ export default function Locations({ navigation, route }) {
   );
 }
 
-/*
+/* //Flyttet til GlobalStyles, men slettes først når det virker!
 const styles = StyleSheet.create({
   container: {
     flex: 1,

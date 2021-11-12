@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Alert,
-  Button,
-  StyleSheet,
-  Pressable,
-  Platform,
-} from "react-native";
+import { View, Text, Alert, Button, StyleSheet, Pressable, Platform } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker";
-
-/*//Global Styles import
+import { Picker } from "@react-native-picker/picker"
 import GlobalStyles from "../styles/GlobalStyles";
 
-//Eksempel på brug af styles
+/*//Eksempel på brug af styles
 <View style={GlobalStyles.container}></View>
 */
 export default function AddTime({ navigation, route }) {
@@ -188,7 +178,7 @@ export default function AddTime({ navigation, route }) {
           <View></View>
         )}
         <View>
-          <Text style={styles.text}>Lokation:</Text>
+          <Text style={GlobalStyles.text}>Lokation:</Text>
           <Picker
             onValueChange={(item, index) => {
               setSelectedLocation(item);
@@ -211,7 +201,7 @@ export default function AddTime({ navigation, route }) {
           </Picker>
         </View>
         <View>
-          <Text style={styles.text}>Kategori:</Text>
+          <Text style={GlobalStyles.text}>Kategori:</Text>
           <Picker
             onValueChange={(item, index) => {
               setSelectedCategory(item);
@@ -234,7 +224,7 @@ export default function AddTime({ navigation, route }) {
           </Picker>
         </View>
         <View>
-          <Text style={styles.text}>Normal pris:</Text>
+          <Text style={GlobalStyles.text}>Normal pris:</Text>
           <TextInput
             value={price}
             onChangeText={(e) => {
@@ -242,7 +232,7 @@ export default function AddTime({ navigation, route }) {
             }}
             placeholder="Indsæt pris før rabat..."
           />
-          <Text style={styles.text}>Rabat pris:</Text>
+          <Text style={GlobalStyles.text}>Rabat pris:</Text>
           <TextInput
             value={discountPrice}
             onChangeText={(e) => {
@@ -252,7 +242,7 @@ export default function AddTime({ navigation, route }) {
           />
         </View>
         <View>
-          <Text style={styles.text}>Beskrivelse:</Text>
+          <Text style={GlobalStyles.text}>Beskrivelse:</Text>
           <TextInput
             value={description}
             onChangeText={(e) => {
@@ -262,7 +252,7 @@ export default function AddTime({ navigation, route }) {
           />
         </View>
 
-        <View styles={styles.button}>
+        <View styles={GlobalStyles.button}>
           <Button title="Save" onPress={() => handleSave()} color="navy" />
         </View>
       </SafeAreaView>
@@ -275,29 +265,29 @@ const DateAndTimeComponent = (props) => {
   if (Platform.OS === "ios") {
     return (
       <View>
-        <Text style={styles.text}>Dato og Tid:</Text>
+        <Text style={GlobalStyles.text}>Dato og Tid:</Text>
         {showDate ?  <Text></Text> : <Pressable
           onPress={() => {
             setShowDate(true);
           }}
-          style={styles.button}
+          style={GlobalStyles.button}
         >
-          <Text style={styles.buttonTXT}>Vælg Dato</Text>
+          <Text style={GlobalStyles.buttonText}>Vælg Dato</Text>
         </Pressable>}
         {showTime ? <Text></Text> : <Pressable
           onPress={() => {
             setShowTime(true);
           }}
-          style={styles.button}
+          style={GlobalStyles.button}
         >
-          <Text style={styles.buttonTXT}>Vælg Tid</Text>
+          <Text style={GlobalStyles.buttonText}>Vælg Tid</Text>
         </Pressable>}
       </View>
     );
   }
   return (
     <View>
-      <Text style={styles.text}>Dato og Tid:</Text>
+      <Text style={GlobalStyles.text}>Dato og Tid:</Text>
       <Text
         style={{ marginLeft: "auto", marginRight: "auto" }}
       >{` ${date.getDate()}/${
@@ -307,9 +297,9 @@ const DateAndTimeComponent = (props) => {
         onPress={() => {
           setShowDate(true);
         }}
-        style={styles.button}
+        style={GlobalStyles.button}
       >
-        <Text style={styles.buttonTXT}>Vælg Dato</Text>
+        <Text style={GlobalStyles.buttonText}>Vælg Dato</Text>
       </Pressable>
       <Text style={{ marginLeft: "auto", marginRight: "auto" }}>{`${
         time.getHours() < 10 ? `0${time.getHours()}` : time.getHours()
@@ -320,14 +310,15 @@ const DateAndTimeComponent = (props) => {
         onPress={() => {
           setShowTime(true);
         }}
-        style={styles.button}
+        style={GlobalStyles.button}
       >
-        <Text style={styles.buttonTXT}>Vælg Tid</Text>
+        <Text style={GlobalStyles.buttonText}>Vælg Tid</Text>
       </Pressable>
     </View>
   );
 };
 
+      /*//Flyttet til GlobalStyles, men slettes først når det virker!
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
@@ -355,3 +346,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+*/
