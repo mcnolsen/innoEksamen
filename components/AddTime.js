@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Alert, Button, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Alert,
+  Button,
+  StyleSheet,
+  Pressable,
+  Platform,
+} from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import GlobalStyles from "../styles/GlobalStyles";
 
 /*//Global Styles import
 import GlobalStyles from "../styles/GlobalStyles";
@@ -14,19 +21,22 @@ import GlobalStyles from "../styles/GlobalStyles";
 <View style={GlobalStyles.container}></View>
 */
 export default function AddTime({ navigation, route }) {
-  const initialState = { time: "", price: "", description: "" };
-  const [newTime, setNewTime] = useState(initialState);
   const [date, setNewDate] = useState(new Date());
-  const [showDate, setShowDate] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("");
+  const [showDate, setShowDate] = useState(Platform.OS === 'ios');
+  const [showTime, setShowTime] = useState(Platform.OS === 'ios');
+
   const [locations, setLocations] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [categories, setCategories] = useState('')
-  const changeTextInput = (name, event) => {
-    setNewTime({ ...newTime, [name]: event });
-  };
+  const [categories, setCategories] = useState("");
+
+  //Inputs
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [price, setPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [time, setTime] = useState(new Date());
+  const [description, setDescription] = useState("");
+
   const handleSave = () => {
-    const { time, price, description } = newTime;
     //Grund til clinic er hardcoded, er at det egentligt skal hentes fra den klinik,
     // som er logget ind. Der er bare ikke grund til at implementere det her i testen.
     const clinic = "Test Clinic";
@@ -36,7 +46,8 @@ export default function AddTime({ navigation, route }) {
       selectedLocation.length === 0 ||
       clinic.length === 0 ||
       date.length === 0 ||
-      selectedCategory === 0
+      selectedCategory === 0 ||
+      discountPrice.length === 0
     ) {
       Alert.alert(
         "Ikke fuldt udfyldt",
@@ -51,31 +62,42 @@ export default function AddTime({ navigation, route }) {
             date: `${date}`,
             time: time,
             price: price,
+            discountPrice: discountPrice,
             location: selectedLocation,
             clinic: clinic,
             status: 1,
             description: description,
-            category: selectedCategory
+            category: selectedCategory,
           });
         Alert.alert(`Gemt`);
-        setNewTime(initialState);
+        clearInformation();
       } catch (error) {
         console.log(`Error: ${error.message}`);
       }
     }
   };
+  //Fjerner inputs
+  const clearInformation = () => {
+    setPrice("");
+    setDiscountPrice("");
+    setDescription("");
+    const today = new Date();
+    setNewDate(today);
+    setTime(today);
+
+  };
   const getLocations = () => {
-    //Selects the table/document table
+    //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Locations/");
 
-    //Performs the query
+    //Performer queryen
     query
       .orderByChild("status")
       .equalTo(1)
       .on("value", (snapshot) => {
         const data = snapshot.val();
-        if (data){
-          setSelectedLocation(Object.values(data)[0])
+        if (data) {
+          setSelectedLocation(Object.values(data)[0]);
         }
         setLocations(data);
       });
@@ -90,8 +112,8 @@ export default function AddTime({ navigation, route }) {
       .equalTo(1)
       .on("value", (snapshot) => {
         const data = snapshot.val();
-        if (data){
-          setSelectedCategory(Object.values(data)[0])
+        if (data) {
+          setSelectedCategory(Object.values(data)[0]);
         }
         setCategories(data);
       });
@@ -111,107 +133,201 @@ export default function AddTime({ navigation, route }) {
   //Array with the keys (id) to the the objects above
   const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
-    <SafeAreaView
-      style={{
-        width: "80%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        marginTop: 10,
-      }}
-    >
-      {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
-      <View>
-        <Text style={GlobalStyles.text}>Date:</Text>
-        <Text
-          style={{ marginLeft: "auto", marginRight: "auto" }}
-        >{` ${date.getDate()}/${
-          date.getMonth() + 1
-        }-${date.getFullYear()}`}</Text>
-        <Pressable
-          onPress={() => {
-            setShowDate(true);
-          }}
-          style={GlobalStyles.button}
-        >
-          <Text style={GlobalStyles.buttonText}>Vælg Dato</Text>
-        </Pressable>
-      </View>
-      <View>
-        <Text style={GlobalStyles.text}>Location:</Text>
-        <Picker
-          onValueChange={(item, index) => {
-            setSelectedLocation(item);
-          }}
-          value={selectedLocation}
-        >
-          {locations ? (
-            locationsArray.map((e, index) => {
-              return (
-                <Picker.Item label={e.name} value={locationsKeys[index]} key={index} />
-              );
-            })
-          ) : (
-            <Picker.Item label="..." />
-          )}
-        </Picker>
-      </View>
-      <View>
-        <Text style={GlobalStyles.text}>Category:</Text>
-        <Picker
-          onValueChange={(item, index) => {
-            setSelectedCategory(item);
-          }}
-          value={selectedCategory}
-        >
-          {categories ? (
-            categoriesArray.map((e, index) => {
-              return (
-                <Picker.Item label={e.name} value={categoriesKeys[index]} key={index} />
-              );
-            })
-          ) : (
-            <Picker.Item label="..." />
-          )}
-        </Picker>
-      </View>
-      {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
-      {showDate ? (
-        <DateTimePicker
-          value={date}
-          onChange={(e, chosenDate) => {
-            setNewDate(chosenDate);
-            setShowDate(false);
-          }}
-          mode="date"
-        />
-      ) : (
-        <View></View>
-      )}
-      {/* Viser de forskellige inputfelter og deres navne*/}
-      {Object.keys(initialState).map((attribute, index) => {
-        return (
-          <View key={index}>
-            {/* Laver det først bogstav til uppercase, så det ser ordentligt ud */}
-            <Text style={GlobalStyles.text}>
-              {`${attribute.charAt(0).toUpperCase()}${attribute.slice(1)}`}:
-            </Text>
-            <TextInput
-              value={newTime[attribute]}
-              onChangeText={(event) => {
-                changeTextInput(attribute, event);
-              }}
-            />
-          </View>
-        );
-      })}
-      <View styles={GlobalStyles.button}>
-        <Button title="Save" onPress={() => handleSave()} color="navy" />
-      </View>
-    </SafeAreaView>
+    <ScrollView style={{ width: "100%" }}>
+      <SafeAreaView
+        style={{
+          width: "80%",
+          marginLeft: "auto",
+          marginRight: "auto",
+          marginTop: 10,
+        }}
+      >
+        {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
+
+        <View>
+          <DateAndTimeComponent
+            showDate={showDate}
+            showTime={showTime}
+            setShowDate={setShowDate}
+            setShowTime={setShowTime}
+            time={time}
+            date={date}
+          />
+        </View>
+
+        {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
+        {showDate ? (
+          <DateTimePicker
+            value={date}
+            onChange={(e, chosenDate) => {
+              //Hvis der vælges et input, og ikke trykkes annuller
+              if (chosenDate) {
+                setNewDate(chosenDate);
+              }
+              //Hvis ios, så går den væk. Ellers ikke. På ios vises det anderledes, derfor er det vigtigt.
+              setShowDate(Platform.OS === "ios");
+            }}
+            mode="date"
+          />
+        ) : (
+          <View></View>
+        )}
+        {showTime ? (
+          <DateTimePicker
+            value={time}
+            onChange={(e, chosenTime) => {
+              //Hvis der vælges et input, og ikke trykkes annuller
+              if (chosenTime) {
+                setTime(chosenTime);
+              }
+              setShowTime(Platform.OS === "ios");
+            }}
+            mode="time"
+          />
+        ) : (
+          <View></View>
+        )}
+        <View>
+          <Text style={styles.text}>Lokation:</Text>
+          <Picker
+            onValueChange={(item, index) => {
+              setSelectedLocation(item);
+            }}
+            selectedValue={selectedLocation}
+          >
+            {locations ? (
+              locationsArray.map((e, index) => {
+                return (
+                  <Picker.Item
+                    label={e.name}
+                    value={locationsKeys[index]}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <Picker.Item label="..." />
+            )}
+          </Picker>
+        </View>
+        <View>
+          <Text style={styles.text}>Kategori:</Text>
+          <Picker
+            onValueChange={(item, index) => {
+              setSelectedCategory(item);
+            }}
+            selectedValue={selectedCategory}
+          >
+            {categories ? (
+              categoriesArray.map((e, index) => {
+                return (
+                  <Picker.Item
+                    label={e.name}
+                    value={categoriesKeys[index]}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <Picker.Item label="..." />
+            )}
+          </Picker>
+        </View>
+        <View>
+          <Text style={styles.text}>Normal pris:</Text>
+          <TextInput
+            value={price}
+            onChangeText={(e) => {
+              setPrice(e);
+            }}
+            placeholder="Indsæt pris før rabat..."
+          />
+          <Text style={styles.text}>Rabat pris:</Text>
+          <TextInput
+            value={discountPrice}
+            onChangeText={(e) => {
+              setDiscountPrice(e);
+            }}
+            placeholder="Indsæt pris efter rabat..."
+          />
+        </View>
+        <View>
+          <Text style={styles.text}>Beskrivelse:</Text>
+          <TextInput
+            value={description}
+            onChangeText={(e) => {
+              setDescription(e);
+            }}
+            placeholder="Indsæt eventuelt en beskrivelse..."
+          />
+        </View>
+
+        <View styles={styles.button}>
+          <Button title="Save" onPress={() => handleSave()} color="navy" />
+        </View>
+      </SafeAreaView>
+    </ScrollView>
   );
 }
 
-/*
+const DateAndTimeComponent = (props) => {
+  const { setShowTime, setShowDate, showDate, showTime, time, date } = props;
+  if (Platform.OS === "ios") {
+    return (
+      <View>
+        <Text style={styles.text}>Dato og Tid:</Text>
+        {showDate ?  <Text></Text> : <Pressable
+          onPress={() => {
+            setShowDate(true);
+          }}
+          style={styles.button}
+        >
+          <Text style={styles.buttonTXT}>Vælg Dato</Text>
+        </Pressable>}
+        {showTime ? <Text></Text> : <Pressable
+          onPress={() => {
+            setShowTime(true);
+          }}
+          style={styles.button}
+        >
+          <Text style={styles.buttonTXT}>Vælg Tid</Text>
+        </Pressable>}
+      </View>
+    );
+  }
+  return (
+    <View>
+      <Text style={styles.text}>Dato og Tid:</Text>
+      <Text
+        style={{ marginLeft: "auto", marginRight: "auto" }}
+      >{` ${date.getDate()}/${
+        date.getMonth() + 1
+      }-${date.getFullYear()}`}</Text>
+      <Pressable
+        onPress={() => {
+          setShowDate(true);
+        }}
+        style={styles.button}
+      >
+        <Text style={styles.buttonTXT}>Vælg Dato</Text>
+      </Pressable>
+      <Text style={{ marginLeft: "auto", marginRight: "auto" }}>{`${
+        time.getHours() < 10 ? `0${time.getHours()}` : time.getHours()
+      }:${
+        time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes()
+      }`}</Text>
+      <Pressable
+        onPress={() => {
+          setShowTime(true);
+        }}
+        style={styles.button}
+      >
+        <Text style={styles.buttonTXT}>Vælg Tid</Text>
+      </Pressable>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
@@ -223,6 +339,7 @@ const styles = StyleSheet.create({
     backgroundColor: "navy",
     borderRadius: 10,
     height: "25%",
+    flex: 2,
   },
   buttonTXT: {
     fontSize: 16,
@@ -238,4 +355,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-*/
