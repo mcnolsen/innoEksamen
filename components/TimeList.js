@@ -104,20 +104,28 @@ export default function TimeList({ navigation }) {
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   return (
-    <ImageBackground
-      style={styles2.container}
-      source={require("../assets/salongro1.jpg")}
-    >
-      <SafeAreaView style={{ height: "100%" }}>
+      <SafeAreaView style={GlobalStyles.container}>
+      <Text style={GlobalStyles.titleText}>Udbudte tider</Text>
         <FlatList
           data={timesArray}
           renderItem={renderItem}
           keyExtractor={(item, index) => timesKeys[index]}
         ></FlatList>
       </SafeAreaView>
-    </ImageBackground>
+
   );
 }
+
+/*
+const styles2 = StyleSheet.create({
+  container: {
+    justifyContent: "center",
+    paddingTop: Platform.OS === "android" ? 20 : 0,
+  },
+});
+ */
+
+/*
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -144,3 +152,4 @@ const styles2 = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? 20 : 0,
   },
 });
+*/

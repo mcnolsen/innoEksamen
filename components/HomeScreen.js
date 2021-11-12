@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Button, ImageBackground, TouchableOpacity, SafeAreaView, Image, } from 'react-native';
+import GlobalStyles from "../styles/GlobalStyles";
 
 function HomeScreen (props) {
     return (

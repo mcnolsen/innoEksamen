@@ -131,7 +131,8 @@ export default function Locations({ navigation, route }) {
 
   return (
     <SafeAreaView style={GlobalStyles.container}>
-      
+      <Text style={GlobalStyles.titleText}>Lokationer</Text>
+  <Text style={GlobalStyles.text}>Opret lokation</Text>
       <Text style={GlobalStyles.label}>Lokationsnavn:</Text>
       <TextInput
         value={newName}

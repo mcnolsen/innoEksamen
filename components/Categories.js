@@ -77,6 +77,7 @@ export default function Categories({ navigation, route }) {
   };
   return (
     <SafeAreaView style={GlobalStyles.container}>
+      <Text style={GlobalStyles.titleText}>Kategorier</Text>
       <Text style={GlobalStyles.label}>Opret kategori:</Text>
       <TextInput
         value={newCategory}
@@ -85,7 +86,7 @@ export default function Categories({ navigation, route }) {
         }}
         placeholder="Indtast kategori navn..."
       ></TextInput>
-      <Button title="Gem" onPress={() => createCategory()} color="navy" />
+      <Button title="Gem" onPress={() => createCategory()} color="#025156" />
       <View style={{ marginTop: 20 }}>
         <Text style={GlobalStyles.label}>Nuværende Kategorier:</Text>
       </View>
