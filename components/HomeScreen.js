@@ -1,7 +1,16 @@
 import React from 'react';
-import { StyleSheet, Button, ImageBackground, TouchableOpacity, SafeAreaView, Image, } from 'react-native';
+import {StyleSheet, Button, ImageBackground, TouchableOpacity, SafeAreaView, Image, Text,} from 'react-native';
 import GlobalStyles from "../styles/GlobalStyles";
 
+function HomeScreen (props) {
+    return (
+        <ImageBackground style={GlobalStyles.imageContainer} source={require("../assets/homeScreenBack.jpg")}>
+        <Text style={GlobalStyles.homeText}>Pronto</Text>
+        </ImageBackground>
+    )
+}
+
+/*
 function HomeScreen (props) {
     return (
    <ImageBackground style={styles2.container} source={require("../assets/homeScreenBack.jpg")}>
@@ -17,13 +26,16 @@ function HomeScreen (props) {
    </ImageBackground>
     );
 }
+
+*/
+
+
 /*
 const styles = StyleSheet.create( {
     background: {
         flex: 1
     }
 })
-*/
 
 const imageStyle = StyleSheet.create({
     constainer: {
@@ -49,5 +61,6 @@ const imageStyle = StyleSheet.create({
       paddingTop: Platform.OS === "android" ? 20 : 0,
     },
   });
+*/
 
 export default HomeScreen;

@@ -10,6 +10,22 @@ const GlobalStyles = StyleSheet.create({
         backgroundColor: "#c1dbd8",
         textAlign: "center",
     },
+    imageContainer: {
+        flex: 1,
+        marginLeft: 0,
+        marginRight: 0,
+        padding: 20,
+        marginBottom: 0,
+        marginTop: -50,
+    },
+    homeText: {
+        fontFamily: "Roboto",
+        fontSize: 80,
+        color: "#333",
+        textAlign: "center",
+        top: "86%",
+        fontWeight: "bold",
+    },
     titleText: {
         fontSize: 24,
         color: '#333',
