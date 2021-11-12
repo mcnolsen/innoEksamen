@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Button,
-  Alert,
-  ImageBackground,
-} from "react-native";
+import { View, Text, FlatList, StyleSheet, Button, Alert, ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
 
@@ -52,13 +45,13 @@ export default function TimeList({ navigation }) {
     //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
     if (item.date) {
       return (
-        <View style={styles.container}>
+        <View style={GlobalStyles.container}>
           <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
             date.getMonth() + 1
           }-${date.getFullYear()}. Sted: ${
             item.location.addressString ? item.location.addressString : item.clinic
           }. Udbyder: ${item.clinic}. Pris: ${item.price}`}</Text>
-          <View style={styles.button}>
+          <View style={GlobalStyles.button}>
             {/* Vi fjerner button midlertidigt for feedback fra stakeholders
             <Button
               title="Book"
@@ -72,11 +65,11 @@ export default function TimeList({ navigation }) {
       );
     }
     return (
-      <View style={styles.container}>
+      <View style={GlobalStyles.container}>
         <Text>{`Tid: ${item.time}. Sted: ${item.clinic}, ${
           location ? location.name : ""
         }. Pris: ${item.price}`}</Text>
-        <View style={styles.button}>
+        <View style={GlobalStyles.button}>
           {/* Vi fjerner button midlertidigt for feedback fra stakeholders
           <Button
             title="Book"

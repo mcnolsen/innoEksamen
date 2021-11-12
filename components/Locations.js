@@ -128,6 +128,7 @@ export default function Locations({ navigation, route }) {
     </SafeAreaView>
     )
   }
+
   return (
     <SafeAreaView style={GlobalStyles.container}>
       
@@ -169,6 +170,7 @@ export default function Locations({ navigation, route }) {
       <View style={{ marginTop: 20 }}>
         <Text style={GlobalStyles.label}>Nuværende lokationer:</Text>
       </View>
+
       {locations ? (
         <FlatList
           data={locationsArray}
@@ -181,6 +183,8 @@ export default function Locations({ navigation, route }) {
     </SafeAreaView>
   );
 }
+
+
 
 /* //Flyttet til GlobalStyles, men slettes først når det virker!
 const styles = StyleSheet.create({
@@ -222,5 +226,4 @@ const styles = StyleSheet.create({
     width: "90%",
     justifyContent: "center",
   },
-});
-*/
+}); */

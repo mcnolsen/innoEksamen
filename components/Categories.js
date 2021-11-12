@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  FlatList,
-  Pressable,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, Button, FlatList, Pressable, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
 import { TextInput } from "react-native-gesture-handler";
+import GlobalStyles from "../styles/GlobalStyles";
 
 export default function Categories({ navigation, route }) {
   const [categories, setCategories] = useState();
@@ -67,24 +60,24 @@ export default function Categories({ navigation, route }) {
   //Render item required for flatlist. Shows how to render each item in the list.
   const renderItem = ({ item, index }) => {
     return (
-      <View style={styles.listItem}>
+      <View style={GlobalStyles.listItem}>
         <Text>{item.name}</Text>
-        <View style={styles.button}>
+        <View style={GlobalStyles.button}>
           <Pressable
             onPress={() => {
               confirmDelete(item, index);
             }}
-            style={styles.button}
+            style={GlobalStyles.button}
           >
-            <Text style={styles.buttonTXT}>Slet</Text>
+            <Text style={GlobalStyles.buttonText}>Slet</Text>
           </Pressable>
         </View>
       </View>
     );
   };
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.label}>Opret kategori:</Text>
+    <SafeAreaView style={GlobalStyles.container}>
+      <Text style={GlobalStyles.label}>Opret kategori:</Text>
       <TextInput
         value={newCategory}
         onChangeText={(e) => {
@@ -94,7 +87,7 @@ export default function Categories({ navigation, route }) {
       ></TextInput>
       <Button title="Gem" onPress={() => createCategory()} color="navy" />
       <View style={{ marginTop: 20 }}>
-        <Text style={styles.label}>Nuværende Kategorier:</Text>
+        <Text style={GlobalStyles.label}>Nuværende Kategorier:</Text>
       </View>
       {categories ? (
         <FlatList
@@ -108,7 +101,7 @@ export default function Categories({ navigation, route }) {
     </SafeAreaView>
   );
 }
-
+ /*
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -148,3 +141,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+*/
