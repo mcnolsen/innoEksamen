@@ -6,13 +6,16 @@ import {
   StyleSheet,
   Button,
   Alert,
-  ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as Location from "expo-location";
-import GlobalStyles from "../styles/GlobalStyles";
+import Slider from "@react-native-community/slider";
+import Checkbox from "expo-checkbox";
 
+import * as Location from "expo-location";
 import { getDistance } from "geolib";
+
+import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
 
@@ -21,7 +24,9 @@ export default function TimeListUsers({ navigation }) {
   const [locations, setLocations] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [timesWithDistance, setTimesWithDistance] = useState();
-
+  const [useMaxDist, setUseMaxDist] = useState(false);
+  const [didSearch, setDidSearch] = useState(false);
+  const [maxDist, setMaxDist] = useState(10)
   useEffect(() => {
     const requestLocationAccess = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -43,7 +48,6 @@ export default function TimeListUsers({ navigation }) {
         .equalTo(1)
         .on("value", (snapshot) => {
           let data = snapshot.val();
-          if (userLocation) {
             let dataValues = Object.values(data);
             let dataKeys = Object.keys(data);
 
@@ -52,8 +56,8 @@ export default function TimeListUsers({ navigation }) {
               id: dataKeys[index],
               ...el,
               distance:
-              //Beregn distance mellem lokations koordinater og brugeren.
-                el.location.lon && el.location.lan
+                //Beregn distance mellem lokations koordinater og brugeren.
+                el.location.lon && el.location.lan && userLocation
                   ? getDistance(
                       {
                         longitude: userLocation.coords.longitude,
@@ -63,24 +67,28 @@ export default function TimeListUsers({ navigation }) {
                     )
                   : false,
             }));
-            setTimesWithDistance(dataDistance);
-          }
-          setTimes(data);
+          setDidSearch(true);
+          setTimes(dataDistance);
         });
     }
   }),
     [];
 
   if (!times) {
-    //Hvis ingen tider, return.
+    //Hvis ingen tider, og men der ikke er søgt endnu.
+    return (
+      <SafeAreaView>
+        <ActivityIndicator size="small" color="#0000ff" />
+      </SafeAreaView>
+    );
+  } else if (!times && didSearch) {
+    //Hvis ingen tider og der er blevet tjekket i db.
     return (
       <SafeAreaView>
         <Text>Ingen tilgængelige tider.</Text>
       </SafeAreaView>
     );
   }
-  //Array with the keys (id) to the the objects above
-  const timesKeys = Object.keys(times);
 
   //Render item required for flatlist. Shows how to render each item in the list.
   const renderItem = ({ item, index }) => {
@@ -144,25 +152,49 @@ export default function TimeListUsers({ navigation }) {
   };
   //Hvad der skal ske, hvis der confirmes
   const handleConfirm = (item, index) => {
-    const id = timesKeys[index];
+
     const bookingsRef = firebase.database().ref(`/Bookings/`);
-    bookingsRef.push({ time_id: id, customer_name: "Jens Ole" });
+    bookingsRef.push({ time_id: item.id, customer_name: "Jens Ole" });
     //Sætter status 0, så denne ikke længere ses, samt lagrer booking i 'Bookings'
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   return (
-    <ImageBackground
-      style={styles2.container}
-      source={require("../assets/salongro1.jpg")}
-    >
-      <SafeAreaView style={{ height: "100%" }}>
-        <FlatList
-          data={timesWithDistance}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => timesKeys[index]}
-        ></FlatList>
-      </SafeAreaView>
-    </ImageBackground>
+    <SafeAreaView style={{ height: "100%" }}>
+      <View style={GlobalStyles.menuOptions}>
+        <View style={GlobalStyles.section}>
+          <Checkbox
+            value={useMaxDist}
+            onValueChange={() => {
+              setUseMaxDist(!useMaxDist);
+            }}
+          />
+          <Text>Brug maksimal distance</Text>
+        </View>
+        {useMaxDist ? (
+          <View style={GlobalStyles.menuOptions}>
+            <Text style={GlobalStyles.label}>Maksimum distance (km)</Text>
+            <Text>
+              {maxDist}
+            </Text>
+            <Slider
+              style={{ width: 200, height: 40}}
+              minimumValue={1}
+              maximumValue={50}
+              minimumTrackTintColor="#FFFFFF"
+              maximumTrackTintColor="#000000"
+              step={1}
+              onValueChange={(e)=>{setMaxDist(e)}}
+              value={maxDist}
+            />
+          </View>
+        ) : null}
+      </View>
+      <FlatList
+        data={times}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      ></FlatList>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({

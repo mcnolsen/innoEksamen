@@ -45,7 +45,7 @@ export default function TimeList({ navigation }) {
     //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
     if (item.date) {
       return (
-        <View style={GlobalStyles.container}>
+        <View style={GlobalStyles.renderItem}>
           <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
             date.getMonth() + 1
           }-${date.getFullYear()}. Sted: ${

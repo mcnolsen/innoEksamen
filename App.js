@@ -11,7 +11,6 @@ import { Ionicons } from "react-native-vector-icons";
 import Locations from "./components/Locations";
 import TimeListUsers from "./components/TimeListUsers";
 
-
 //For stack navigator. Ved ikke om vi vil anvende dette.
 import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();
@@ -24,8 +23,14 @@ const Drawer = createDrawerNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="HomeScreen">
-      <Drawer.Screen name="Hjem" component={HomeScreen} />
+      {/* swipeEdgeWidth: 0, for at forhindre at menuen kan aktiveres ved swipes */}
+      <Drawer.Navigator
+        initialRouteName="HomeScreen"
+        screenOptions={{
+          swipeEdgeWidth: 0,
+        }}
+      >
+        <Drawer.Screen name="Hjem" component={HomeScreen} />
         <Drawer.Screen name="Udbyder Menu" component={TabNavigationSuppliers} />
         <Drawer.Screen name="Bruger Menu" component={TabNavigationUsers} />
       </Drawer.Navigator>
@@ -44,7 +49,6 @@ const StackNavigation = () => {
     </Stack.Navigator>
   );
 };
-
 
 const TabNavigationSuppliers = () => {
   return (
