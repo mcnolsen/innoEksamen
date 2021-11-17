@@ -148,7 +148,6 @@ export default function TimeList({ navigation }) {
   };
   //Confirmation of the booking is required, so to prevent accidental bookings.
   const editTime = (item) => {
-      console.log(item)
      navigation.navigate("Details",{time:item})
   };
   //Hvad der skal ske, hvis der confirmes
