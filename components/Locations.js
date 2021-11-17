@@ -46,10 +46,16 @@ export default function Locations({ navigation, route }) {
       const coordinates = await Location.geocodeAsync(
         `${newAddress}, ${newZip} ${newCity}`
       );
+      console.log(coordinates)
       //Hvis ikke newLocation findes eller hvis længden er 0, vis fejl.
       if (newName.length === 0 || !newName || newZip.length === 0 || !newZip || newAddress.length === 0 || !newAddress | newCity.length === 0 || !newCity) {
         Alert.alert("Venligst udfyld alle oplysninger.");
-      } else {
+      } else if (!coordinates[0]){
+        //Hvis koordinaterne ikke kunne findes
+        Alert.alert("Oplysningerne kunne ikke konverteres til koordinater. Venligst prøv igen.");
+
+      }
+      else {
         firebase
           .database()
           .ref("/Locations/")
@@ -74,7 +80,7 @@ export default function Locations({ navigation, route }) {
     Alert.alert("Er du sikker?", "Vil du slette denne lokation?", [
       { text: "Fortryd", style: "cancel" },
       {
-        text: "Slet tid",
+        text: "Slet lokation",
         style: "default",
         onPress: () => {
           deleteLocation(item, index);

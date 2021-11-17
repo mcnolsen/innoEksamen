@@ -21,12 +21,11 @@ import firebase from "firebase";
 
 export default function TimeListUsers({ navigation }) {
   const [times, setTimes] = useState();
-  const [locations, setLocations] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
-  const [timesWithDistance, setTimesWithDistance] = useState();
   const [useMaxDist, setUseMaxDist] = useState(false);
   const [didSearch, setDidSearch] = useState(false);
-  const [maxDist, setMaxDist] = useState(10)
+  const [maxDist, setMaxDist] = useState(10);
+  const [missingLocations, setMissingLocations] = useState([]);
   useEffect(() => {
     const requestLocationAccess = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -48,9 +47,10 @@ export default function TimeListUsers({ navigation }) {
         .equalTo(1)
         .on("value", (snapshot) => {
           let data = snapshot.val();
+          if (data){
             let dataValues = Object.values(data);
             let dataKeys = Object.keys(data);
-
+  
             //Få id med i objektet, samt distance beregninger
             let dataDistance = dataValues.map((el, index) => ({
               id: dataKeys[index],
@@ -67,14 +67,50 @@ export default function TimeListUsers({ navigation }) {
                     )
                   : false,
             }));
+            setTimes(dataDistance);
+          }
           setDidSearch(true);
-          setTimes(dataDistance);
+
+
         });
     }
+    /*
+    if (!locations) {
+      //Finder locations
+      let queryLocation = firebase.database().ref(`/Locations/`);
+      queryLocation.on("value", (snapshot) => {
+        const data2 = snapshot.val();
+        setLocations(data2);
+      });
+    }*/
   }),
     [];
-
-  if (!times) {
+  const findLocationDetails = (location_id) => {
+    //Leder efter, om der allerede er data for en lokation med dette id, i de lokationer, som ikke automatisk bliver gemt i tids objektet
+    let knownMissingLocation = missingLocations.find((el) => {
+      return el.id === location_id
+    });
+    if (knownMissingLocation) {
+      return knownMissingLocation
+    } else {
+      //Finder locations
+      let queryLocation = firebase.database().ref(`/Locations/${location_id}`);
+      queryLocation.once("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          let missingLocationToAdd = {id: location_id, ...data
+          };
+          let newMissingLocations = [...missingLocations, missingLocationToAdd]
+          setMissingLocations(newMissingLocations);
+        }
+      });
+      let knownMissingLocationAgain = missingLocations.find((el) => {
+        return el.id === location_id
+      });
+      return knownMissingLocationAgain
+    }
+  };
+  if (!times && !didSearch) {
     //Hvis ingen tider, og men der ikke er søgt endnu.
     return (
       <SafeAreaView>
@@ -93,6 +129,14 @@ export default function TimeListUsers({ navigation }) {
   //Render item required for flatlist. Shows how to render each item in the list.
   const renderItem = ({ item, index }) => {
     const date = new Date(item.date);
+    let locationAlternative;
+    if (!item.location.addressString) {
+      let searchLocation = findLocationDetails(item.location)
+      if (searchLocation){
+        locationAlternative = searchLocation.addressString ? searchLocation.addressString : searchLocation.name;
+
+      }
+    }
     //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
     if (item.date) {
       return (
@@ -102,7 +146,7 @@ export default function TimeListUsers({ navigation }) {
           }-${date.getFullYear()}. Sted: ${
             item.location.addressString
               ? item.location.addressString
-              : item.clinic
+              : locationAlternative
           }. Udbyder: ${item.clinic}. Pris: ${item.price}. Distance: ${
             item.distance ? `${item.distance}m` : `Kan ikke findes.`
           }`}</Text>
@@ -152,7 +196,6 @@ export default function TimeListUsers({ navigation }) {
   };
   //Hvad der skal ske, hvis der confirmes
   const handleConfirm = (item, index) => {
-
     const bookingsRef = firebase.database().ref(`/Bookings/`);
     bookingsRef.push({ time_id: item.id, customer_name: "Jens Ole" });
     //Sætter status 0, så denne ikke længere ses, samt lagrer booking i 'Bookings'
@@ -173,17 +216,17 @@ export default function TimeListUsers({ navigation }) {
         {useMaxDist ? (
           <View style={GlobalStyles.menuOptions}>
             <Text style={GlobalStyles.label}>Maksimum distance (km)</Text>
-            <Text>
-              {maxDist}
-            </Text>
+            <Text>{maxDist}</Text>
             <Slider
-              style={{ width: 200, height: 40}}
+              style={{ width: 200, height: 40 }}
               minimumValue={1}
               maximumValue={50}
               minimumTrackTintColor="#FFFFFF"
               maximumTrackTintColor="#000000"
               step={1}
-              onValueChange={(e)=>{setMaxDist(e)}}
+              onValueChange={(e) => {
+                setMaxDist(e);
+              }}
               value={maxDist}
             />
           </View>
