@@ -8,10 +8,7 @@ const Details = ({route,navigation}) => {
 
     //Her hentes tidsværdierne og de sættes
     useEffect(() => {
-        setTime(route.params.time[1]);
-        return () => {
-            setTime({})
-        }
+        setTime(route.params);
     }),[];
     const handleEdit = () => {
         const time = route.params.time
@@ -54,18 +51,6 @@ const Details = ({route,navigation}) => {
         <View style={styles.container}>
             <Button title="Ændre" onPress={ () => handleEdit()} />
             <Button title="Slet" onPress={() => confirmDelete()} />
-            {
-                Object.entries(time).map((item,index)=>{
-                    return(
-                        <View style={styles.row} key={index}>
-                            {/*Booking keys navn*/}
-                            <Text style={styles.label}>{item[0]} </Text>
-                            {/*Booking values navn*/}
-                            <Text style={styles.value}>{item[1]}</Text>
-                        </View>
-                    )
-                })
-            }
         </View>
     );
 }

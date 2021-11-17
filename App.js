@@ -10,6 +10,7 @@ import HomeScreen from "./components/HomeScreen";
 import { Ionicons } from "react-native-vector-icons";
 import Locations from "./components/Locations";
 import TimeListUsers from "./components/TimeListUsers";
+import Details from "./components/Details";
 
 //For stack navigator. Ved ikke om vi vil anvende dette.
 import { createStackNavigator } from "@react-navigation/stack";
@@ -41,11 +42,8 @@ export default function App() {
 const StackNavigation = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="TimeList" component={TimeList} />
-      <Stack.Screen name="AddTime" component={AddTime} />
-      <Stack.Screen name="Locations" component={Locations} />
-      <Stack.Screen name="Categories" component={Categories} />
+      <Stack.Screen name="TimeList" component={TimeList} options={{title: null, headerShown: false}} />
+        <Stack.Screen name="Details" component={Details} options={{title:'Ændre detaljer'}} />
     </Stack.Navigator>
   );
 };
@@ -56,8 +54,8 @@ const TabNavigationSuppliers = () => {
       {/*Vi tilføjer navigationen for bottom-tabs
        */}
       <Tab.Screen
-        name="TimeList"
-        component={TimeList}
+        name="Stack Navigation"
+        component={StackNavigation}
         options={{
           title: "Time List",
           tabBarIcon: () => <Ionicons name="calendar" size={20} />,

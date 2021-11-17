@@ -119,14 +119,13 @@ export default function TimeList({ navigation }) {
             item.distance ? `${item.distance}m` : `Kan ikke findes.`
           }`}</Text>
           <View style={GlobalStyles.button}>
-            {/* Vi fjerner button midlertidigt for feedback fra stakeholders
             <Button
-              title="Book"
+              title="Ændre"
               onPress={() => {
-                confirmBooking(item, index);
+                editTime(item);
               }}
             ></Button>
-            */}
+
           </View>
         </View>
       );
@@ -137,30 +136,20 @@ export default function TimeList({ navigation }) {
           location ? location.name : ""
         }. Pris: ${item.price}`}</Text>
         <View style={GlobalStyles.button}>
-          {/* Vi fjerner button midlertidigt for feedback fra stakeholders
           <Button
-            title="Book"
+            title="Ændre"
             onPress={() => {
-              confirmBooking(item, index);
+              editTime(item);
             }}
           ></Button>
-          */}
         </View>
       </View>
     );
   };
   //Confirmation of the booking is required, so to prevent accidental bookings.
-  const confirmBooking = (item, index) => {
-    Alert.alert("Er du sikker på?", "Vil du booke denne tid?", [
-      { text: "Fortryd", style: " cancel" },
-      {
-        text: "Book Tid",
-        style: "default",
-        onPress: () => {
-          handleConfirm(item, index);
-        },
-      },
-    ]);
+  const editTime = (item) => {
+      console.log(item)
+     navigation.navigate("Details",{time:item})
   };
   //Hvad der skal ske, hvis der confirmes
   const handleConfirm = (item, index) => {
