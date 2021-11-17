@@ -48,7 +48,9 @@ export default function Locations({ navigation, route }) {
       );
       //Hvis ikke newLocation findes eller hvis længden er 0, vis fejl.
       if (newName.length === 0 || !newName || newZip.length === 0 || !newZip || newAddress.length === 0 || !newAddress | newCity.length === 0 || !newCity) {
-        Alert.alert("Venligst udfyld alle oplysninger.");
+        Alert.alert(
+        "Alle felter skal udfyldes",
+        "Venligst udfyld alt før der kan gemmes");
       } else {
         firebase
           .database()
@@ -74,7 +76,7 @@ export default function Locations({ navigation, route }) {
     Alert.alert("Er du sikker?", "Vil du slette denne lokation?", [
       { text: "Fortryd", style: "cancel" },
       {
-        text: "Slet tid",
+        text: "Slet lokation",
         style: "default",
         onPress: () => {
           deleteLocation(item, index);

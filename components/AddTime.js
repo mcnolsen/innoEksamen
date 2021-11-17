@@ -48,7 +48,7 @@ export default function AddTime({ navigation, route }) {
       discountPrice.length === 0
     ) {
       Alert.alert(
-        "Ikke fuldt udfyldt",
+        "Alle felter skal udfyldes",
         "Venligst udfyld alt før der kan gemmes"
       );
     } else {
@@ -136,14 +136,7 @@ export default function AddTime({ navigation, route }) {
   //Array with the keys (id) to the the objects above
   const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
-    <ScrollView style={{ width: "100%" }}>
-      <SafeAreaView
-        style={{
-          width: "80%",
-          marginLeft: "auto",
-          marginRight: "auto",
-          marginTop: 10,
-        }}
+      <SafeAreaView style={GlobalStyles.container}
       >
         {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
 
@@ -265,11 +258,10 @@ export default function AddTime({ navigation, route }) {
           />
         </View>
 
-        <View styles={GlobalStyles.button}>
-          <Button title="Save" onPress={() => handleSave()} color="navy" />
-        </View>
+          <Button 
+          title="Gem" onPress={() => handleSave()} color="#333"/>
+
       </SafeAreaView>
-    </ScrollView>
   );
 }
 

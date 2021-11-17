@@ -24,21 +24,21 @@ export default function Categories({ navigation, route }) {
   const createCategory = () => {
     //Hvis ikke newcategory findes eller hvis længden er 0, vis fejl.
     if (newCategory.length === 0 || !newCategory) {
-      Alert.alert("Venligst indtast et lokations navn.");
+      Alert.alert("Venligst indtast et navn på kategori.");
     } else {
       firebase.database().ref("/Categories/").push({
         name: newCategory,
         status: 1,
       });
-      Alert.alert("Lokationen er oprettet.");
+      Alert.alert("Kategorien er oprettet.");
     }
   };
   //Bekræftelse af slettelse er nødvendig, så fejl-sletninger ikke sker så ofte.
   const confirmDelete = (item, index) => {
-    Alert.alert("Er du sikker?", "Vil du slette denne lokation?", [
+    Alert.alert("Er du sikker?", "Vil du slette denne kategori", [
       { text: "Fortryd", style: "cancel" },
       {
-        text: "Slet tid",
+        text: "Slet kategori",
         style: "default",
         onPress: () => {
           deleteCategory(item, index);
@@ -50,7 +50,7 @@ export default function Categories({ navigation, route }) {
   const deleteCategory = (item, index) => {
     const id = categoriesKeys[index];
     firebase.database().ref(`/Categories/${id}`).remove();
-    alert("Categorien er nu slettet.");
+    alert("Kategorien er nu slettet.");
   };
   //Array with all the objects from the query
   const categoriesArray = categories ? Object.values(categories) : false;
