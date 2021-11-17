@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Alert, Button, StyleSheet, Pressable, Platform } from "react-native";
+import {
+  View,
+  Text,
+  Alert,
+  Button,
+  StyleSheet,
+  Pressable,
+  Platform,
+} from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import firebase from "firebase";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker"
+import { Picker } from "@react-native-picker/picker";
 import GlobalStyles from "../styles/GlobalStyles";
 
 /*//Eksempel på brug af styles
@@ -12,8 +20,8 @@ import GlobalStyles from "../styles/GlobalStyles";
 */
 export default function AddTime({ navigation, route }) {
   const [date, setNewDate] = useState(new Date());
-  const [showDate, setShowDate] = useState(Platform.OS === 'ios');
-  const [showTime, setShowTime] = useState(Platform.OS === 'ios');
+  const [showDate, setShowDate] = useState(Platform.OS === "ios");
+  const [showTime, setShowTime] = useState(Platform.OS === "ios");
 
   const [locations, setLocations] = useState("");
   const [categories, setCategories] = useState("");
@@ -50,7 +58,13 @@ export default function AddTime({ navigation, route }) {
           .ref("/Times/")
           .push({
             date: `${date}`,
-            time: time,
+            time: `${
+              time.getHours() < 10 ? `0${time.getHours()}` : time.getHours()
+            }:${
+              time.getMinutes() < 10
+                ? `0${time.getMinutes()}`
+                : time.getMinutes()
+            }`,
             price: price,
             discountPrice: discountPrice,
             location: selectedLocation,
@@ -74,7 +88,6 @@ export default function AddTime({ navigation, route }) {
     const today = new Date();
     setNewDate(today);
     setTime(today);
-
   };
   const getLocations = () => {
     //Vælger tabellen/dokument tabellen
@@ -266,22 +279,30 @@ const DateAndTimeComponent = (props) => {
     return (
       <View>
         <Text style={GlobalStyles.text}>Dato og Tid:</Text>
-        {showDate ?  <Text></Text> : <Pressable
-          onPress={() => {
-            setShowDate(true);
-          }}
-          style={GlobalStyles.button}
-        >
-          <Text style={GlobalStyles.buttonText}>Vælg Dato</Text>
-        </Pressable>}
-        {showTime ? <Text></Text> : <Pressable
-          onPress={() => {
-            setShowTime(true);
-          }}
-          style={GlobalStyles.button}
-        >
-          <Text style={GlobalStyles.buttonText}>Vælg Tid</Text>
-        </Pressable>}
+        {showDate ? (
+          <Text></Text>
+        ) : (
+          <Pressable
+            onPress={() => {
+              setShowDate(true);
+            }}
+            style={GlobalStyles.button}
+          >
+            <Text style={GlobalStyles.buttonText}>Vælg Dato</Text>
+          </Pressable>
+        )}
+        {showTime ? (
+          <Text></Text>
+        ) : (
+          <Pressable
+            onPress={() => {
+              setShowTime(true);
+            }}
+            style={GlobalStyles.button}
+          >
+            <Text style={GlobalStyles.buttonText}>Vælg Tid</Text>
+          </Pressable>
+        )}
       </View>
     );
   }
@@ -318,7 +339,7 @@ const DateAndTimeComponent = (props) => {
   );
 };
 
-      /*//Flyttet til GlobalStyles, men slettes først når det virker!
+/*//Flyttet til GlobalStyles, men slettes først når det virker!
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
