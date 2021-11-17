@@ -50,7 +50,6 @@ const GlobalStyles = StyleSheet.create({
     backgroundColor: "#059095",
     borderRadius: 10,
     height: "25%",
-    height: 30,
   },
   buttonText: {
     fontSize: 16,
