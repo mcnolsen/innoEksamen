@@ -80,7 +80,7 @@ export default function Locations({ navigation, route }) {
     Alert.alert("Er du sikker?", "Vil du slette denne lokation?", [
       { text: "Fortryd", style: "cancel" },
       {
-        text: "Slet tid",
+        text: "Slet lokation",
         style: "default",
         onPress: () => {
           deleteLocation(item, index);

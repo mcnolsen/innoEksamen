@@ -105,7 +105,7 @@ const TabNavigationUsers = () => {
         component={TimeListUsers}
         options={{
           title: "Tidsliste",
-          tabBarIcon: () => <Ionicons name="home" size={20} />,
+          tabBarIcon: () => <Ionicons name="calendar" size={20} />,
           headerShown: null,
         }}
       />
