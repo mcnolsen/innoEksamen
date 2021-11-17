@@ -24,16 +24,15 @@ const Details = ({ route, navigation }) => {
 
   //Her hentes tidsværdierne og de sættes
   useEffect(() => {
-      if(!locations){
-        getLocations();
-        setPrice(route.params.time.price);
-        setDiscountPrice(route.params.time.discountPrice);
-        setDescription(route.params.time.description);
-      }
-      if(!categories){
-        getCategories();
-      }
-
+    if (!locations) {
+      getLocations();
+      setPrice(route.params.time.price);
+      setDiscountPrice(route.params.time.discountPrice);
+      setDescription(route.params.time.description);
+    }
+    if (!categories) {
+      getCategories();
+    }
   }),
     [];
 
@@ -115,22 +114,22 @@ const Details = ({ route, navigation }) => {
             ...el,
           }));
           setLocations(dataMapped);
-          //Finder den nuværende lokation
-          const selected = dataMapped.find((el) => {
-            return el === route.params.time.location;
-          });
 
-          setSelectedLocation(selected);
+          //Finder den nuværende lokation
+          //Nogle gange gemmes childs som objekter, mens andre gange er de bare en key. Disse skal behandles anderledes.
+          //Hvis objekt, så skal der findes dennes id/key.
+          if (typeof route.params.time.location !== "object") {
+            return setSelectedLocation(route.params.time.location);
+          } else {
+            routeLocationStringified = JSON.stringify(route.params.time.location);
+
+            const selected = dataValues.findIndex((el) => {
+              return JSON.stringify(el) === routeLocationStringified;
+            });
+            return setSelectedLocation(dataKeys[selected]);
+          }
         }
       });
-
-      let query2 = firebase.database().ref(`/Times/${route.params.time.id}/location`);
-      query2.on('value', (snapshot) => {
-        const data = snapshot.val();
-        console.log(data)
-      })
-
-
   };
   const getCategories = () => {
     //Selects the table/document table
@@ -154,10 +153,17 @@ const Details = ({ route, navigation }) => {
           setCategories(dataMapped);
 
           //Finder den nuværende kategori
-          const selected = dataMapped.find((el) => {
-            return el.category === route.params.time.category;
-          });
-          setSelectedCategory(selected);
+          //Nogle gange gemmes childs som objekter, mens andre gange er de bare en key. Disse skal behandles anderledes.
+          //Hvis objekt, så skal der findes dennes id/key.
+          if (typeof route.params.time.category !== "object") {
+            return setSelectedCategory(route.params.time.category);
+          } else {
+            routeCategoryStringified = JSON.stringify(route.params.time.category);
+            const selected = dataValues.findIndex((el) => {
+              return JSON.stringify(el) === routeCategoryStringified;
+            });
+            setSelectedCategory(dataKeys[selected]);
+          }
         }
       });
   };
@@ -173,6 +179,7 @@ const Details = ({ route, navigation }) => {
         <Text style={GlobalStyles.text}>Lokation:</Text>
         <Picker
           onValueChange={(item, index) => {
+            console.log(item);
             setSelectedLocation(item);
           }}
           selectedValue={selectedLocation}
