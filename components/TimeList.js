@@ -78,14 +78,21 @@ export default function TimeList({ navigation }) {
   }),
     [];
 
-  if (!times) {
-    //Hvis ingen tider, return.
-    return (
-      <SafeAreaView>
-        <Text>Ingen tilgængelige tider.</Text>
-      </SafeAreaView>
-    );
-  }
+    if (!times && !didSearch) {
+      //Hvis ingen tider, og men der ikke er søgt endnu.
+      return (
+        <SafeAreaView>
+          <ActivityIndicator size="small" color="#0000ff" />
+        </SafeAreaView>
+      );
+    } else if (!times && didSearch) {
+      //Hvis ingen tider og der er blevet tjekket i db.
+      return (
+        <SafeAreaView>
+          <Text>Ingen tilgængelige tider.</Text>
+        </SafeAreaView>
+      );
+    }
 
   //Render item required for flatlist. Shows how to render each item in the list.
   const renderItem = ({ item, index }) => {
