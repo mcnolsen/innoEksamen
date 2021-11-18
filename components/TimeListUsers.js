@@ -202,7 +202,7 @@ export default function TimeListUsers({ navigation }) {
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   return (
-    <SafeAreaView style={{ height: "100%" }}>
+    <SafeAreaView style={GlobalStyles.container}>
       <View style={GlobalStyles.menuOptions}>
         <View style={GlobalStyles.section}>
           <Checkbox
@@ -240,29 +240,3 @@ export default function TimeListUsers({ navigation }) {
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 10,
-    margin: 5,
-    padding: 5,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-  },
-  button: {
-    flex: 0,
-    width: "20%",
-    justifyContent: "center",
-    marginLeft: "auto",
-    marginRight: "auto",
-  },
-  label: { fontWeight: "bold" },
-});
-
-const styles2 = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    paddingTop: Platform.OS === "android" ? 20 : 0,
-  },
-});
