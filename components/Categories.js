@@ -62,7 +62,7 @@ export default function Categories({ navigation, route }) {
     return (
       <View style={GlobalStyles.listItem}>
         <Text>{item.name}</Text>
-        <View style={GlobalStyles.button}>
+        <View style={GlobalStyles.listButton}>
           <Pressable
             onPress={() => {
               confirmDelete(item, index);
@@ -102,44 +102,3 @@ export default function Categories({ navigation, route }) {
     </SafeAreaView>
   );
 }
- /*
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginLeft: 30,
-    marginRight: 30,
-    padding: 5,
-    marginBottom: 100,
-  },
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "40%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    elevation: 3,
-    backgroundColor: "navy",
-    borderRadius: 10,
-    height: "25%",
-    height: 30,
-  },
-  buttonTXT: {
-    fontSize: 16,
-    lineHeight: 21,
-    letterSpacing: 0.25,
-    color: "white",
-  },
-  label: { fontWeight: "bold" },
-  listItem: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 10,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    marginTop: 5,
-    padding: 5,
-    width: "90%",
-    justifyContent: "center",
-  },
-});
-*/

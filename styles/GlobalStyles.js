@@ -73,6 +73,17 @@ const GlobalStyles = StyleSheet.create({
     width: "90%",
     justifyContent: "center",
   },
+  listButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    elevation: 3,
+    backgroundColor: "#059095",
+    borderRadius: 10,
+    height: "50%",
+  },
   section: {
     flexDirection: "row",
   },
