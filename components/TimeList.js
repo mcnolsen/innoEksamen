@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Button,
-  Alert,
-  ActivityIndicator,
+    View,
+    Text,
+    FlatList,
+    StyleSheet,
+    Button,
+    Alert,
+    ActivityIndicator, Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
@@ -108,7 +108,7 @@ export default function TimeList({ navigation }) {
     //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
     if (item.date) {
       return (
-        <View style={GlobalStyles.container}>
+        <SafeAreaView style={GlobalStyles.container}>
           <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
             date.getMonth() + 1
           }-${date.getFullYear()}. Sted: ${
@@ -118,20 +118,20 @@ export default function TimeList({ navigation }) {
           }. Udbyder: ${item.clinic}. Pris: ${item.price}. Distance: ${
             item.distance ? `${item.distance}m` : `Kan ikke findes.`
           }`}</Text>
-          <View style={GlobalStyles.button}>
-            <Button
-              title="Ændre"
-              onPress={() => {
-                editTime(item);
-              }}
-            ></Button>
-
-          </View>
-        </View>
-      );
-    }
+        <View style={GlobalStyles.listButton}>
+            <Pressable
+        onPress={() => {
+            editTime(item, index);
+        }}
+        style={GlobalStyles.button}
+            ><Text style={GlobalStyles.buttonText}>Ændre</Text>
+            </Pressable>
+            </View>
+            </SafeAreaView>
+    );
+    };
     return (
-      <View style={GlobalStyles.container}>
+      <SafeAreaView style={GlobalStyles.container}>
         <Text>{`Tid: ${item.time}. Sted: ${item.clinic}, ${
           location ? location.name : ""
         }. Pris: ${item.price}`}</Text>
@@ -143,7 +143,7 @@ export default function TimeList({ navigation }) {
             }}
           ></Button>
         </View>
-      </View>
+      </SafeAreaView>
     );
   };
   //Confirmation of the booking is required, so to prevent accidental bookings.
@@ -159,7 +159,7 @@ export default function TimeList({ navigation }) {
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   return (
-    <SafeAreaView style={{ height: "100%" }}>
+      <SafeAreaView style={GlobalStyles.container}>
       <FlatList
         data={times}
         renderItem={renderItem}

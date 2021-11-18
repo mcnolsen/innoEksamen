@@ -68,8 +68,7 @@ export default function Categories({ navigation, route }) {
               confirmDelete(item, index);
             }}
             style={GlobalStyles.button}
-          >
-            <Text style={GlobalStyles.buttonText}>Slet</Text>
+          ><Text style={GlobalStyles.buttonText}>Slet</Text>
           </Pressable>
         </View>
       </View>

@@ -140,7 +140,7 @@ export default function TimeListUsers({ navigation }) {
     //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
     if (item.date) {
       return (
-        <View style={GlobalStyles.container}>
+        <SafeAreaView style={GlobalStyles.container}>
           <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
             date.getMonth() + 1
           }-${date.getFullYear()}. Sted: ${
@@ -160,7 +160,7 @@ export default function TimeListUsers({ navigation }) {
             ></Button>
             */}
           </View>
-        </View>
+        </SafeAreaView>
       );
     }
     return (
