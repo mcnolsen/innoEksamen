@@ -76,7 +76,7 @@ export default function TimeListUsers({ navigation }) {
         setLocations(data2);
       });
     }*/
-  });
+  }, []);
   useEffect(() => {
     //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Times/");
