@@ -21,29 +21,49 @@ const Tab = createBottomTabNavigator();
 import { createDrawerNavigator } from "@react-navigation/drawer";
 const Drawer = createDrawerNavigator();
 
+//Ui
+import { ThemeProvider } from "react-native-elements";
+const theme = {
+  Button: {
+    color: '#fff',
+  },
+}
 export default function App() {
   return (
-    <NavigationContainer>
-      {/* swipeEdgeWidth: 0, for at forhindre at menuen kan aktiveres ved swipes */}
-      <Drawer.Navigator
-        initialRouteName="HomeScreen"
-        screenOptions={{
-          swipeEdgeWidth: 0,
-        }}
-      >
-        <Drawer.Screen name="Hjem" component={HomeScreen} />
-        <Drawer.Screen name="Udbyder Menu" component={TabNavigationSuppliers} />
-        <Drawer.Screen name="Bruger Menu" component={TabNavigationUsers} />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <ThemeProvider>
+      <NavigationContainer>
+        {/* swipeEdgeWidth: 0, for at forhindre at menuen kan aktiveres ved swipes */}
+        <Drawer.Navigator
+          initialRouteName="HomeScreen"
+          screenOptions={{
+            swipeEdgeWidth: 0,
+          }}
+        >
+          <Drawer.Screen name="Hjem" component={HomeScreen} />
+          <Drawer.Screen
+            name="Udbyder Menu"
+            component={TabNavigationSuppliers}
+          />
+          <Drawer.Screen name="Bruger Menu" component={TabNavigationUsers} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
 
 const StackNavigation = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="TimeList" component={TimeList} options={{title: null, headerShown: false}} />
-        <Stack.Screen name="Details" component={Details} options={{title:'Ændre detaljer'}} />
+      <Stack.Screen
+        name="TimeList"
+        component={TimeList}
+        options={{ title: null, headerShown: false }}
+      />
+      <Stack.Screen
+        name="Details"
+        component={Details}
+        options={{ title: "Ændre detaljer" }}
+      />
     </Stack.Navigator>
   );
 };

@@ -93,7 +93,31 @@ export default function TimeList({ navigation }) {
         </SafeAreaView>
       );
     }
-
+    const findLocationDetails = (location_id) => {
+      //Leder efter, om der allerede er data for en lokation med dette id, i de lokationer, som ikke automatisk bliver gemt i tids objektet
+      let knownMissingLocation = missingLocations.find((el) => {
+        return el.id === location_id
+      });
+      if (knownMissingLocation) {
+        return knownMissingLocation
+      } else {
+        //Finder locations
+        let queryLocation = firebase.database().ref(`/Locations/${location_id}`);
+        queryLocation.once("value", (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            let missingLocationToAdd = {id: location_id, ...data
+            };
+            let newMissingLocations = [...missingLocations, missingLocationToAdd]
+            setMissingLocations(newMissingLocations);
+          }
+        });
+        let knownMissingLocationAgain = missingLocations.find((el) => {
+          return el.id === location_id
+        });
+        return knownMissingLocationAgain
+      }
+    };
   //Render item required for flatlist. Shows how to render each item in the list.
   const renderItem = ({ item, index }) => {
     const date = new Date(item.date);

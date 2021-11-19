@@ -147,7 +147,7 @@ export default function TimeListUsers({ navigation }) {
             item.location.addressString
               ? item.location.addressString
               : locationAlternative
-          }. Udbyder: ${item.clinic}. Pris: ${item.price}. Distance: ${
+          }. Udbyder: ${item.clinic}. Ny pris: ${item.discountPrice}. Før pris: ${item.price}. Rabat: ${Number(item.price)-item.discountPrice}. Distance: ${
             item.distance ? `${item.distance}m` : `Kan ikke findes.`
           }`}</Text>
           <View style={GlobalStyles.button}>

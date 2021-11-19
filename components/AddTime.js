@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Alert,
-  Button,
   StyleSheet,
   Pressable,
   Platform,
@@ -14,6 +13,8 @@ import firebase from "firebase";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import GlobalStyles from "../styles/GlobalStyles";
+
+import { Button, Badge } from "react-native-elements";
 
 /*//Eksempel på brug af styles
 <View style={GlobalStyles.container}></View>
@@ -136,8 +137,8 @@ export default function AddTime({ navigation, route }) {
   //Array with the keys (id) to the the objects above
   const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
-      <SafeAreaView style={GlobalStyles.container}
-      >
+    <SafeAreaView style={GlobalStyles.container}>
+
         {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
 
         <View>
@@ -258,10 +259,8 @@ export default function AddTime({ navigation, route }) {
           />
         </View>
 
-          <Button 
-          title="Gem" onPress={() => handleSave()} color="#333"/>
-
-      </SafeAreaView>
+        <Button title="Gem" onPress={() => handleSave()} color="#333" />
+    </SafeAreaView>
   );
 }
 
