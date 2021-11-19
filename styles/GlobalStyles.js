@@ -63,15 +63,15 @@ const GlobalStyles = StyleSheet.create({
     color: "#333",
   },
   listItem: {
-    flex: 1,
     borderWidth: 1,
     borderRadius: 10,
-    marginLeft: "auto",
-    marginRight: "auto",
+    borderColor:'white',
     marginTop: 5,
+    margin: 5,
     padding: 5,
-    width: "90%",
-    justifyContent: "center",
+    width: "45%",
+    minHeight: 60
+    
   },
   listButton: {
     alignItems: "center",

@@ -7,10 +7,11 @@ import {
   Button,
   Alert,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Slider, CheckBox } from "react-native-elements";
+import { Slider, CheckBox, Divider } from "react-native-elements";
 //import Slider from "@react-native-community/slider";
 //import Checkbox from "expo-checkbox";
 import { Picker } from "@react-native-picker/picker";
@@ -45,26 +46,26 @@ export default function TimeListUsers({ navigation }) {
       setUserLocation(userLocation);
     };
     requestLocationAccess();
-      //Referer til categories tabellen
-      let query = firebase.database().ref("/Categories/");
+    //Referer til categories tabellen
+    let query = firebase.database().ref("/Categories/");
 
-      //Perfomer querien til at få alle lokationer
-      query.on("value", (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          dataKeys = Object.keys(data);
-          dataValues = Object.values(data);
+    //Perfomer querien til at få alle lokationer
+    query.on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        dataKeys = Object.keys(data);
+        dataValues = Object.values(data);
 
-          if (dataKeys && dataValues) {
-            const dataMapped = dataValues.map((el, index) => ({
-              id: dataKeys[index],
-              ...el,
-            }));
-            setCategories(dataMapped);
-            setSelectedCategory(dataMapped[0].id);
-          }
+        if (dataKeys && dataValues) {
+          const dataMapped = dataValues.map((el, index) => ({
+            id: dataKeys[index],
+            ...el,
+          }));
+          setCategories(dataMapped);
+          setSelectedCategory(dataMapped[0].id);
         }
-      });
+      }
+    });
     /*
     if (!locations) {
       //Finder locations
@@ -81,7 +82,7 @@ export default function TimeListUsers({ navigation }) {
     //Performs the query
     query
       .orderByChild("category")
-      .equalTo(selectedCategory, )
+      .equalTo(selectedCategory)
       .on("value", (snapshot) => {
         let data = snapshot.val();
         if (data) {
@@ -227,23 +228,52 @@ export default function TimeListUsers({ navigation }) {
       return <Text>Ingen tilgængelige tider</Text>;
     } else {
       return (
-        <View>
+        <View
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            flexDirection: "row",
+            flexBasis: 4,
+            justifyContent: "center",
+          }}
+        >
           {times.map((el) => {
-            return(
-              <View key={el.id}>
-            <Text>
-              %
-              {(((Number(el.price) - Number(el.discountPrice)) /
-                Number(el.price)) *
-                100).toFixed(2)}
-            </Text>
-            </View>
-          )})}
-          <FlatList
-            data={times}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          ></FlatList>
+            return (
+              <Pressable
+                key={el.id}
+                style={GlobalStyles.listItem}
+                onPress={() => {
+                  navigation.navigate("UserTimeDetails", { time: el });
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "right",
+                    fontWeight: "bold",
+                    color: "green",
+                  }}
+                >
+                  -
+                  {(
+                    ((Number(el.price) - Number(el.discountPrice)) /
+                      Number(el.price)) *
+                    100
+                  ).toFixed(2)}
+                  %
+                </Text>
+                <Divider />
+                {/* Placeholder. Clinic navnet skal findes ved at lede i databasen, når den finder tiderne*/}
+                <Text>Udbyder: {el.clinic}</Text>
+                <Text>Pris: {el.discountPrice}</Text>
+                <Text>
+                  Distance:
+                  {el.distance
+                    ? ` ${(el.distance / 1000).toFixed(1)}`
+                    : " Kunne ikke findes."}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
       );
     }

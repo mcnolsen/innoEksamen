@@ -11,6 +11,7 @@ import { Ionicons } from "react-native-vector-icons";
 import Locations from "./components/Locations";
 import TimeListUsers from "./components/TimeListUsers";
 import Details from "./components/Details";
+import UserTimeDetails from "./components/UserTimeDetails";
 
 //For stack navigator. Ved ikke om vi vil anvende dette.
 import { createStackNavigator } from "@react-navigation/stack";
@@ -36,11 +37,10 @@ const theme = {
   },
   CheckBox: {
     containerStyle: {
-      backgroundColor: 'transparent',
-      borderWidth: 0
+      backgroundColor: "transparent",
+      borderWidth: 0,
     },
-    
-  }
+  },
 };
 export default function App() {
   return (
@@ -82,6 +82,22 @@ const StackNavigation = () => {
   );
 };
 
+const UserTimeDetailsStackNavigation = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="UserTimeList"
+        component={TimeListUsers}
+        options={{ title: null, headerShown: false }}
+      />
+      <Stack.Screen
+        name="UserTimeDetails"
+        component={UserTimeDetails}
+        options={{ title: "Yderligere oplysninger" }}
+      />
+    </Stack.Navigator>
+  );
+};
 const TabNavigationSuppliers = () => {
   return (
     <Tab.Navigator>
@@ -134,7 +150,7 @@ const TabNavigationUsers = () => {
        */}
       <Tab.Screen
         name="TimeListUsers"
-        component={TimeListUsers}
+        component={UserTimeDetailsStackNavigation}
         options={{
           title: "Tidsliste",
           tabBarIcon: () => <Ionicons name="calendar" size={20} />,
