@@ -71,8 +71,6 @@ export default function TimeList({ navigation }) {
             setTimes(dataDistance);
           }
           setDidSearch(true);
-
-
         });
     }
   }),

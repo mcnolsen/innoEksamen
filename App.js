@@ -25,12 +25,26 @@ const Drawer = createDrawerNavigator();
 import { ThemeProvider } from "react-native-elements";
 const theme = {
   Button: {
-    color: '#fff',
+    color: "#fff",
   },
-}
+  Slider: {
+    thumbStyle: {
+      height: 20,
+      width: 20,
+      backgroundColor: "white",
+    },
+  },
+  CheckBox: {
+    containerStyle: {
+      backgroundColor: 'transparent',
+      borderWidth: 0
+    },
+    
+  }
+};
 export default function App() {
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={theme}>
       <NavigationContainer>
         {/* swipeEdgeWidth: 0, for at forhindre at menuen kan aktiveres ved swipes */}
         <Drawer.Navigator

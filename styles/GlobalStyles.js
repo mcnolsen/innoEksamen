@@ -88,7 +88,10 @@ const GlobalStyles = StyleSheet.create({
     flexDirection: "row",
   },
   menuOptions: {
-      padding: 5
+      padding: 5,
+      borderRadius: 10,
+      borderColor: 'white',
+      borderWidth: 1,
   },
 });
 

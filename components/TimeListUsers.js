@@ -9,8 +9,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Slider from "@react-native-community/slider";
-import Checkbox from "expo-checkbox";
+
+import { Slider, CheckBox } from "react-native-elements";
+//import Slider from "@react-native-community/slider";
+//import Checkbox from "expo-checkbox";
+import { Picker } from "@react-native-picker/picker";
 
 import * as Location from "expo-location";
 import { getDistance } from "geolib";
@@ -26,6 +29,10 @@ export default function TimeListUsers({ navigation }) {
   const [didSearch, setDidSearch] = useState(false);
   const [maxDist, setMaxDist] = useState(10);
   const [missingLocations, setMissingLocations] = useState([]);
+
+  const [categories, setCategories] = useState();
+  const [selectedCategory, setSelectedCategory] = useState("");
+
   useEffect(() => {
     const requestLocationAccess = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -38,20 +45,54 @@ export default function TimeListUsers({ navigation }) {
       setUserLocation(userLocation);
     };
     requestLocationAccess();
-    if (!times) {
-      //Vælger tabellen/dokument tabellen
-      let query = firebase.database().ref("/Times/");
-      //Performs the query
-      query
-        .orderByChild("status")
-        .equalTo(1)
-        .on("value", (snapshot) => {
-          let data = snapshot.val();
-          if (data){
-            let dataValues = Object.values(data);
-            let dataKeys = Object.keys(data);
-  
-            //Få id med i objektet, samt distance beregninger
+    if (!categories) {
+      //Referer til categories tabellen
+      let query = firebase.database().ref("/Categories/");
+
+      //Perfomer querien til at få alle lokationer
+      query.on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          dataKeys = Object.keys(data);
+          dataValues = Object.values(data);
+
+          if (dataKeys && dataValues){
+            const dataMapped = dataValues.map((el, index) => ({
+              id: dataKeys[index],
+              ...el,
+            }));
+            setCategories(dataMapped);
+            setSelectedCategory(dataMapped[0].id);
+          }
+        }
+      });
+    }
+    /*
+    if (!locations) {
+      //Finder locations
+      let queryLocation = firebase.database().ref(`/Locations/`);
+      queryLocation.on("value", (snapshot) => {
+        const data2 = snapshot.val();
+        setLocations(data2);
+      });
+    }*/
+  });
+  useEffect(() => {
+
+    //Vælger tabellen/dokument tabellen
+    let query = firebase.database().ref("/Times/");
+    //Performs the query
+    query
+      .orderByChild("category")
+      .equalTo(selectedCategory)
+      .once("value", (snapshot) => {
+        let data = snapshot.val();
+        if (data) {
+          let dataValues = Object.values(data);
+          let dataKeys = Object.keys(data);
+
+          //Få id med i objektet, samt distance beregninger
+          if (dataKeys && dataValues){
             let dataDistance = dataValues.map((el, index) => ({
               id: dataKeys[index],
               ...el,
@@ -69,72 +110,50 @@ export default function TimeListUsers({ navigation }) {
             }));
             setTimes(dataDistance);
           }
-          setDidSearch(true);
-
-
-        });
-    }
-    /*
-    if (!locations) {
-      //Finder locations
-      let queryLocation = firebase.database().ref(`/Locations/`);
-      queryLocation.on("value", (snapshot) => {
-        const data2 = snapshot.val();
-        setLocations(data2);
+        }
+        else{
+          setTimes(null)
+        }
+        setDidSearch(true);
       });
-    }*/
-  }),
-    [];
+  
+  }, [selectedCategory]);
+
   const findLocationDetails = (location_id) => {
     //Leder efter, om der allerede er data for en lokation med dette id, i de lokationer, som ikke automatisk bliver gemt i tids objektet
     let knownMissingLocation = missingLocations.find((el) => {
-      return el.id === location_id
+      return el.id === location_id;
     });
     if (knownMissingLocation) {
-      return knownMissingLocation
+      return knownMissingLocation;
     } else {
       //Finder locations
       let queryLocation = firebase.database().ref(`/Locations/${location_id}`);
       queryLocation.once("value", (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          let missingLocationToAdd = {id: location_id, ...data
-          };
-          let newMissingLocations = [...missingLocations, missingLocationToAdd]
+          let missingLocationToAdd = { id: location_id, ...data };
+          let newMissingLocations = [...missingLocations, missingLocationToAdd];
           setMissingLocations(newMissingLocations);
         }
       });
       let knownMissingLocationAgain = missingLocations.find((el) => {
-        return el.id === location_id
+        return el.id === location_id;
       });
-      return knownMissingLocationAgain
+      return knownMissingLocationAgain;
     }
   };
-  if (!times && !didSearch) {
-    //Hvis ingen tider, og men der ikke er søgt endnu.
-    return (
-      <SafeAreaView>
-        <ActivityIndicator size="small" color="#0000ff" />
-      </SafeAreaView>
-    );
-  } else if (!times && didSearch) {
-    //Hvis ingen tider og der er blevet tjekket i db.
-    return (
-      <SafeAreaView>
-        <Text>Ingen tilgængelige tider.</Text>
-      </SafeAreaView>
-    );
-  }
 
   //Render item required for flatlist. Shows how to render each item in the list.
   const renderItem = ({ item, index }) => {
     const date = new Date(item.date);
     let locationAlternative;
     if (!item.location.addressString) {
-      let searchLocation = findLocationDetails(item.location)
-      if (searchLocation){
-        locationAlternative = searchLocation.addressString ? searchLocation.addressString : searchLocation.name;
-
+      let searchLocation = findLocationDetails(item.location);
+      if (searchLocation) {
+        locationAlternative = searchLocation.addressString
+          ? searchLocation.addressString
+          : searchLocation.name;
       }
     }
     //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
@@ -147,10 +166,14 @@ export default function TimeListUsers({ navigation }) {
             item.location.addressString
               ? item.location.addressString
               : locationAlternative
-          }. Udbyder: ${item.clinic}. Ny pris: ${item.discountPrice}. Før pris: ${item.price}. Rabat: ${Number(item.price)-item.discountPrice}. Distance: ${
+          }. Udbyder: ${item.clinic}. Ny pris: ${
+            item.discountPrice
+          }. Før pris: ${item.price}. Rabat: ${
+            Number(item.price) - item.discountPrice
+          }. Distance: ${
             item.distance ? `${item.distance}m` : `Kan ikke findes.`
           }`}</Text>
-          <View style={GlobalStyles.button}>
+          <View>
             {/* Vi fjerner button midlertidigt for feedback fra stakeholders
             <Button
               title="Book"
@@ -164,11 +187,11 @@ export default function TimeListUsers({ navigation }) {
       );
     }
     return (
-      <View style={GlobalStyles.container}>
+      <SafeAreaView style={GlobalStyles.container}>
         <Text>{`Tid: ${item.time}. Sted: ${item.clinic}, ${
           location ? location.name : ""
         }. Pris: ${item.price}`}</Text>
-        <View style={GlobalStyles.button}>
+        <View>
           {/* Vi fjerner button midlertidigt for feedback fra stakeholders
           <Button
             title="Book"
@@ -178,7 +201,7 @@ export default function TimeListUsers({ navigation }) {
           ></Button>
           */}
         </View>
-      </View>
+      </SafeAreaView>
     );
   };
   //Confirmation of the booking is required, so to prevent accidental bookings.
@@ -201,24 +224,57 @@ export default function TimeListUsers({ navigation }) {
     //Sætter status 0, så denne ikke længere ses, samt lagrer booking i 'Bookings'
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
+  const TimesListComponent = (props) => {
+    const {times, didSearch} = props;
+    if (!times && !didSearch){
+      return(<ActivityIndicator/>)
+    }
+    else if (!times && didSearch){
+      return (<Text>Ingen tilgængelige tider</Text>)
+    }
+    else{
+      return(
+      <FlatList
+      data={times}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+    ></FlatList>)
+    }
+      
+  }
   return (
     <SafeAreaView style={GlobalStyles.container}>
       <View style={GlobalStyles.menuOptions}>
-        <View style={GlobalStyles.section}>
-          <Checkbox
-            value={useMaxDist}
-            onValueChange={() => {
-              setUseMaxDist(!useMaxDist);
-            }}
-          />
-          <Text>Brug maksimal distance</Text>
-        </View>
+        <Text style={GlobalStyles.text}>Kategori:</Text>
+        <Picker
+          onValueChange={(item, index) => {
+            setSelectedCategory(item);
+          }}
+          selectedValue={selectedCategory}
+        >
+          {categories ? (
+            categories.map((e, index) => {
+              return <Picker.Item label={e.name} value={e.id} key={index} />;
+            })
+          ) : (
+            <Picker.Item label="..." />
+          )}
+        </Picker>
+      </View>
+      <View style={GlobalStyles.menuOptions}>
+        <CheckBox
+          checked={useMaxDist}
+          onPress={() => {
+            setUseMaxDist(!useMaxDist);
+          }}
+          title="Brug maksimal distance"
+        />
         {useMaxDist ? (
-          <View style={GlobalStyles.menuOptions}>
-            <Text style={GlobalStyles.label}>Maksimum distance (km)</Text>
-            <Text>{maxDist}</Text>
+          <View>
+            <Text style={{ color: "#333" }}>
+              Maksimum distance: {maxDist} km
+            </Text>
             <Slider
-              style={{ width: 200, height: 40 }}
               minimumValue={1}
               maximumValue={50}
               minimumTrackTintColor="#FFFFFF"
@@ -232,11 +288,7 @@ export default function TimeListUsers({ navigation }) {
           </View>
         ) : null}
       </View>
-      <FlatList
-        data={times}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      ></FlatList>
+      <TimesListComponent times={times} didSearch={didSearch}/>
     </SafeAreaView>
   );
 }
