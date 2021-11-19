@@ -56,7 +56,7 @@ export default function TimeListUsers({ navigation }) {
           dataKeys = Object.keys(data);
           dataValues = Object.values(data);
 
-          if (dataKeys && dataValues){
+          if (dataKeys && dataValues) {
             const dataMapped = dataValues.map((el, index) => ({
               id: dataKeys[index],
               ...el,
@@ -78,7 +78,6 @@ export default function TimeListUsers({ navigation }) {
     }*/
   });
   useEffect(() => {
-
     //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Times/");
     //Performs the query
@@ -92,7 +91,7 @@ export default function TimeListUsers({ navigation }) {
           let dataKeys = Object.keys(data);
 
           //Få id med i objektet, samt distance beregninger
-          if (dataKeys && dataValues){
+          if (dataKeys && dataValues) {
             let dataDistance = dataValues.map((el, index) => ({
               id: dataKeys[index],
               ...el,
@@ -110,13 +109,11 @@ export default function TimeListUsers({ navigation }) {
             }));
             setTimes(dataDistance);
           }
-        }
-        else{
-          setTimes(null)
+        } else {
+          setTimes(null);
         }
         setDidSearch(true);
       });
-  
   }, [selectedCategory]);
 
   const findLocationDetails = (location_id) => {
@@ -225,23 +222,34 @@ export default function TimeListUsers({ navigation }) {
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   const TimesListComponent = (props) => {
-    const {times, didSearch} = props;
-    if (!times && !didSearch){
-      return(<ActivityIndicator/>)
+    const { times, didSearch } = props;
+    if (!times && !didSearch) {
+      return <ActivityIndicator />;
+    } else if (!times && didSearch) {
+      return <Text>Ingen tilgængelige tider</Text>;
+    } else {
+      return (
+        <View>
+          {times.map((el) => {
+            return(
+              <View>
+            <Text>
+              %
+              {(((Number(el.price) - Number(el.discountPrice)) /
+                Number(el.price)) *
+                100).toFixed(2)}
+            </Text>
+            </View>
+          )})}
+          <FlatList
+            data={times}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          ></FlatList>
+        </View>
+      );
     }
-    else if (!times && didSearch){
-      return (<Text>Ingen tilgængelige tider</Text>)
-    }
-    else{
-      return(
-      <FlatList
-      data={times}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-    ></FlatList>)
-    }
-      
-  }
+  };
   return (
     <SafeAreaView style={GlobalStyles.container}>
       <View style={GlobalStyles.menuOptions}>
@@ -288,7 +296,7 @@ export default function TimeListUsers({ navigation }) {
           </View>
         ) : null}
       </View>
-      <TimesListComponent times={times} didSearch={didSearch}/>
+      <TimesListComponent times={times} didSearch={didSearch} />
     </SafeAreaView>
   );
 }
