@@ -68,11 +68,11 @@ export default function AddTime({ navigation, route }) {
             }`,
             price: price,
             discountPrice: discountPrice,
-            location: selectedLocation,
+            location: `${selectedLocation}`,
             clinic: clinic,
             status: 1,
             description: description,
-            category: selectedCategory,
+            category: `${selectedCategory}`,
           });
         Alert.alert(`Gemt`);
         clearInformation();
@@ -101,7 +101,7 @@ export default function AddTime({ navigation, route }) {
       .on("value", (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          setSelectedLocation(Object.values(data)[0]);
+          setSelectedLocation(Object.keys(data)[0]);
         }
         setLocations(data);
       });
@@ -117,7 +117,7 @@ export default function AddTime({ navigation, route }) {
       .on("value", (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          setSelectedCategory(Object.values(data)[0]);
+          setSelectedCategory(Object.keys(data)[0]);
         }
         setCategories(data);
       });

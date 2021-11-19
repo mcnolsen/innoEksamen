@@ -45,7 +45,6 @@ export default function TimeListUsers({ navigation }) {
       setUserLocation(userLocation);
     };
     requestLocationAccess();
-    if (!categories) {
       //Referer til categories tabellen
       let query = firebase.database().ref("/Categories/");
 
@@ -66,7 +65,6 @@ export default function TimeListUsers({ navigation }) {
           }
         }
       });
-    }
     /*
     if (!locations) {
       //Finder locations
@@ -83,8 +81,8 @@ export default function TimeListUsers({ navigation }) {
     //Performs the query
     query
       .orderByChild("category")
-      .equalTo(selectedCategory)
-      .once("value", (snapshot) => {
+      .equalTo(selectedCategory, )
+      .on("value", (snapshot) => {
         let data = snapshot.val();
         if (data) {
           let dataValues = Object.values(data);
@@ -232,7 +230,7 @@ export default function TimeListUsers({ navigation }) {
         <View>
           {times.map((el) => {
             return(
-              <View>
+              <View key={el.id}>
             <Text>
               %
               {(((Number(el.price) - Number(el.discountPrice)) /
