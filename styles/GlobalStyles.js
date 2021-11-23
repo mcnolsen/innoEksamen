@@ -63,15 +63,15 @@ const GlobalStyles = StyleSheet.create({
     color: "#333",
   },
   listItem: {
+    flex: 1,
     borderWidth: 1,
     borderRadius: 10,
-    borderColor:'white',
+    marginLeft: "auto",
+    marginRight: "auto",
     marginTop: 5,
-    margin: 5,
     padding: 5,
-    width: "45%",
-    minHeight: 60
-    
+    width: "90%",
+    justifyContent: "center",
   },
   listButton: {
     alignItems: "center",
@@ -88,10 +88,7 @@ const GlobalStyles = StyleSheet.create({
     flexDirection: "row",
   },
   menuOptions: {
-      padding: 5,
-      borderRadius: 10,
-      borderColor: 'white',
-      borderWidth: 1,
+      padding: 5
   },
 });
 
