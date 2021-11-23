@@ -21,7 +21,7 @@ const GlobalStyles = StyleSheet.create({
   },
   homeText: {
     fontFamily: "Roboto",
-    fontSize: 80,
+    fontSize: 100,
     color: "white",
     textAlign: "center",
     top: "86%",
