@@ -4,7 +4,7 @@ const GlobalStyles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 0,
-    backgroundColor: "#c1dbd8",
+    backgroundColor: "#afccca",
     padding: 10,
   },
   renderItem: {
@@ -65,13 +65,13 @@ const GlobalStyles = StyleSheet.create({
   listItem: {
     borderWidth: 1,
     borderRadius: 10,
-    borderColor:'white',
+    borderColor:'#066f76',
     marginTop: 5,
     margin: 5,
     padding: 5,
     width: "45%",
-    minHeight: 60
-    
+    minHeight: 60,
+    backgroundColor: "white",
   },
   listButton: {
     alignItems: "center",
@@ -88,10 +88,27 @@ const GlobalStyles = StyleSheet.create({
     flexDirection: "row",
   },
   menuOptions: {
-      padding: 5,
+      padding: 10,
       borderRadius: 10,
-      borderColor: 'white',
+      borderColor: '#066f76',
       borderWidth: 1,
+      backgroundColor: 'white',
+      width: "92%",
+      marginLeft: "auto",
+      marginRight: "auto",
+  },
+  userContainer: {
+      flex: 1,
+      marginBottom: 0,
+      backgroundColor: "#086f74",
+      padding: 10,
+  },
+  userTitleText: {
+      fontFamily: "Roboto",
+      fontSize: 80,
+      color: "#333",
+      textAlign: "center",
+      fontWeight: "bold",
   },
 });
 

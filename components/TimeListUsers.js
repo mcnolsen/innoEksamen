@@ -7,7 +7,7 @@ import {
   Button,
   Alert,
   ActivityIndicator,
-  Pressable,
+  Pressable, ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,6 +22,7 @@ import { getDistance } from "geolib";
 import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
+import {getBackgroundColor} from "react-native/Libraries/LogBox/UI/LogBoxStyle";
 
 export default function TimeListUsers({ navigation }) {
   const [times, setTimes] = useState();
@@ -250,7 +251,7 @@ export default function TimeListUsers({ navigation }) {
                   style={{
                     textAlign: "right",
                     fontWeight: "bold",
-                    color: "green",
+                    color: "orange",
                   }}
                 >
                   -
@@ -279,7 +280,8 @@ export default function TimeListUsers({ navigation }) {
     }
   };
   return (
-    <SafeAreaView style={GlobalStyles.container}>
+    <SafeAreaView style={GlobalStyles.userContainer}>
+      <Text style={GlobalStyles.userTitleText}>Pronto</Text>
       <View style={GlobalStyles.menuOptions}>
         <Text style={GlobalStyles.text}>Kategori:</Text>
         <Picker
@@ -296,8 +298,6 @@ export default function TimeListUsers({ navigation }) {
             <Picker.Item label="..." />
           )}
         </Picker>
-      </View>
-      <View style={GlobalStyles.menuOptions}>
         <CheckBox
           checked={useMaxDist}
           onPress={() => {
