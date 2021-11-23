@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -24,13 +24,12 @@ import GlobalStyles from "../styles/GlobalStyles";
 import firebase from "firebase";
 
 export default function TimeListUsers({ navigation }) {
-  const [times, setTimes] = useState();
+  const [times, setTimes] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [useMaxDist, setUseMaxDist] = useState(false);
   const [didSearch, setDidSearch] = useState(false);
   const [maxDist, setMaxDist] = useState(10);
-  const [missingLocations, setMissingLocations] = useState([]);
-
+  const [locations, setLocations] = useState([]);
   const [categories, setCategories] = useState();
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -49,7 +48,7 @@ export default function TimeListUsers({ navigation }) {
     //Referer til categories tabellen
     let query = firebase.database().ref("/Categories/");
 
-    //Perfomer querien til at få alle lokationer
+    //Perfomer querien til at få alle kategorier
     query.on("value", (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -88,118 +87,58 @@ export default function TimeListUsers({ navigation }) {
         if (data) {
           let dataValues = Object.values(data);
           let dataKeys = Object.keys(data);
-
           //Få id med i objektet, samt distance beregninger
           if (dataKeys && dataValues) {
-            let dataDistance = dataValues.map((el, index) => ({
-              id: dataKeys[index],
-              ...el,
-              distance:
-                //Beregn distance mellem lokations koordinater og brugeren.
-                el.location.lon && el.location.lan && userLocation
-                  ? getDistance(
-                      {
-                        longitude: userLocation.coords.longitude,
-                        latitude: userLocation.coords.latitude,
-                      },
-                      { longitude: el.location.lon, latitude: el.location.lan }
-                    )
-                  : false,
-            }));
-            setTimes(dataDistance);
+            let data = dataValues.map((el, index) => {
+              findLocationDetails(el.location);
+              return {
+                id: dataKeys[index],
+                ...el,
+              };
+            });
+            setTimes(data);
           }
         } else {
-          setTimes(null);
+          setTimes([]);
         }
         setDidSearch(true);
       });
   }, [selectedCategory]);
 
-  const findLocationDetails = (location_id) => {
+  const findLocationDetails = async (location_id) => {
     //Leder efter, om der allerede er data for en lokation med dette id, i de lokationer, som ikke automatisk bliver gemt i tids objektet
-    let knownMissingLocation = missingLocations.find((el) => {
+    let knownLocation = locations.find((el) => {
       return el.id === location_id;
     });
-    if (knownMissingLocation) {
-      return knownMissingLocation;
+    if (knownLocation) {
+      return knownLocation;
     } else {
       //Finder locations
       let queryLocation = firebase.database().ref(`/Locations/${location_id}`);
       queryLocation.once("value", (snapshot) => {
         const data = snapshot.val();
-        if (data) {
-          let missingLocationToAdd = { id: location_id, ...data };
-          let newMissingLocations = [...missingLocations, missingLocationToAdd];
-          setMissingLocations(newMissingLocations);
+        if (data && userLocation) {
+          let distance = getDistance(
+            {
+              longitude: userLocation.coords.longitude,
+              latitude: userLocation.coords.latitude,
+            },
+            { longitude: data.lon, latitude: data.lan }
+          );
+
+          let locationToAdd = { id: location_id, distance: distance, ...data };
+
+          let newLocations = [...locations, locationToAdd];
+          setLocations(newLocations);
         }
       });
-      let knownMissingLocationAgain = missingLocations.find((el) => {
+      let knownLocationAgain = locations.find((el) => {
         return el.id === location_id;
       });
-      return knownMissingLocationAgain;
+      return knownLocationAgain;
     }
   };
 
-  //Render item required for flatlist. Shows how to render each item in the list.
-  const renderItem = ({ item, index }) => {
-    const date = new Date(item.date);
-    let locationAlternative;
-    if (!item.location.addressString) {
-      let searchLocation = findLocationDetails(item.location);
-      if (searchLocation) {
-        locationAlternative = searchLocation.addressString
-          ? searchLocation.addressString
-          : searchLocation.name;
-      }
-    }
-    //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
-    if (item.date) {
-      return (
-        <SafeAreaView style={GlobalStyles.container}>
-          <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
-            date.getMonth() + 1
-          }-${date.getFullYear()}. Sted: ${
-            item.location.addressString
-              ? item.location.addressString
-              : locationAlternative
-          }. Udbyder: ${item.clinic}. Ny pris: ${
-            item.discountPrice
-          }. Før pris: ${item.price}. Rabat: ${
-            Number(item.price) - item.discountPrice
-          }. Distance: ${
-            item.distance ? `${item.distance}m` : `Kan ikke findes.`
-          }`}</Text>
-          <View>
-            {/* Vi fjerner button midlertidigt for feedback fra stakeholders
-            <Button
-              title="Book"
-              onPress={() => {
-                confirmBooking(item, index);
-              }}
-            ></Button>
-            */}
-          </View>
-        </SafeAreaView>
-      );
-    }
-    return (
-      <SafeAreaView style={GlobalStyles.container}>
-        <Text>{`Tid: ${item.time}. Sted: ${item.clinic}, ${
-          location ? location.name : ""
-        }. Pris: ${item.price}`}</Text>
-        <View>
-          {/* Vi fjerner button midlertidigt for feedback fra stakeholders
-          <Button
-            title="Book"
-            onPress={() => {
-              confirmBooking(item, index);
-            }}
-          ></Button>
-          */}
-        </View>
-      </SafeAreaView>
-    );
-  };
   //Confirmation of the booking is required, so to prevent accidental bookings.
   const confirmBooking = (item, index) => {
     Alert.alert("Er du sikker på?", "Vil du booke denne tid?", [
@@ -221,8 +160,32 @@ export default function TimeListUsers({ navigation }) {
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   const TimesListComponent = (props) => {
-    const { times, didSearch } = props;
-    if (!times && !didSearch) {
+    const { times, didSearch, locations } = props;
+    const [timesWithDistance, setTimesWithDistance] = useState([]);
+
+    useEffect(() => {
+      if (locations && locations.length > 0) {
+        let timesWithDistanceToAdd = times.map((el) => {
+          let location = locations.find((element) => {
+            return element.id === el.location;
+          });
+          console.log(location);
+          if (location) {
+            return {
+              ...el,
+              //Beregn distance mellem lokations koordinater og brugeren.
+              distance: location.distance,
+            };
+          } else {
+            return el;
+          }
+        });
+        console.log(timesWithDistanceToAdd);
+        setTimesWithDistance(timesWithDistanceToAdd);
+      }
+    }, [times]);
+
+    if (!times && !didSearch && (!locations || locations.length === 0)) {
       return <ActivityIndicator />;
     } else if (!times && didSearch) {
       return <Text>Ingen tilgængelige tider</Text>;
@@ -237,7 +200,8 @@ export default function TimeListUsers({ navigation }) {
             justifyContent: "center",
           }}
         >
-          {times.map((el) => {
+          {timesWithDistance.map((el) => {
+            console.log((el.distance / 1000).toFixed(1));
             return (
               <Pressable
                 key={el.id}
@@ -268,7 +232,7 @@ export default function TimeListUsers({ navigation }) {
                 <Text>
                   Distance:
                   {el.distance
-                    ? ` ${(el.distance / 1000).toFixed(1)}`
+                    ? ` ${(el.distance / 1000).toFixed(1)}km`
                     : " Kunne ikke findes."}
                 </Text>
               </Pressable>
@@ -324,7 +288,12 @@ export default function TimeListUsers({ navigation }) {
           </View>
         ) : null}
       </View>
-      <TimesListComponent times={times} didSearch={didSearch} />
+      <TimesListComponent
+        times={times}
+        didSearch={didSearch}
+        locations={locations}
+        key={times}
+      />
     </SafeAreaView>
   );
 }
