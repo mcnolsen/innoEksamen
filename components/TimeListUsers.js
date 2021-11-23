@@ -302,8 +302,9 @@ export default function TimeListUsers({ navigation }) {
         </Picker>
         <CheckBox
           checked={useMaxDist}
-          onPress={() => {
-            setUseMaxDist(!useMaxDist);
+          checkedColor="#038f93"
+          onPress={() =>
+              {setUseMaxDist(!useMaxDist);
           }}
           title="Vælg distance"
         />
