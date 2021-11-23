@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { Rating } from "react-native-elements";
 import firebase from "firebase";
+import {SafeAreaView} from "react-native-safe-area-context";
+import GlobalStyles from "../styles/GlobalStyles";
 export default function UserTimeDetails({ route, navigation }) {
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
@@ -29,18 +31,17 @@ export default function UserTimeDetails({ route, navigation }) {
     });
   }, []);
   return (
-    <View>
-      <Text>Udbyder: {route.params.time.clinic}</Text>
-      <Text>Kategori: {category.name}</Text>
-      <Text>Lokation: {location.addressString}</Text>
-      <Text>Normal pris: {route.params.time.price}</Text>
-      <Text>Ny pris: {route.params.time.discountPrice}</Text>
-      <Text>
-        Beskrivelse:{" "}
+      <SafeAreaView style={GlobalStyles.userContainer}>
+      <Text style={GlobalStyles.text}>Udbyder: {route.params.time.clinic}</Text>
+    <Text style={GlobalStyles.text}>Kategori: {category.name}</Text>
+    <Text style={GlobalStyles.text}>Lokation: {location.addressString}</Text>
+    <Text style={GlobalStyles.text}>Normal pris: {route.params.time.price}</Text>
+    <Text style={GlobalStyles.text}>Ny pris: {route.params.time.discountPrice}</Text>
+    <Text style={GlobalStyles.text}>Beskrivelse:{" "}
         {route.params.time.description ? route.params.time.description : null}
       </Text>
-      <Text>Rating:</Text>
+    <Text style={GlobalStyles.text}>Rating:</Text>
       <Rating readonly startingValue={rating} fractions={1} />
-    </View>
+    </SafeAreaView>
   );
 }

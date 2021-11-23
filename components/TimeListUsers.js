@@ -236,6 +236,7 @@ export default function TimeListUsers({ navigation }) {
             flexDirection: "row",
             flexBasis: 4,
             justifyContent: "center",
+
           }}
         >
           {times.map((el) => {
