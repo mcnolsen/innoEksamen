@@ -7,7 +7,7 @@ import {
   Button,
   Alert,
   ActivityIndicator,
-  Pressable,
+  Pressable, ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,6 +22,7 @@ import { getDistance } from "geolib";
 import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
+import {getBackgroundColor} from "react-native/Libraries/LogBox/UI/LogBoxStyle";
 
 export default function TimeListUsers({ navigation }) {
   const [times, setTimes] = useState([]);
@@ -198,6 +199,7 @@ export default function TimeListUsers({ navigation }) {
             flexDirection: "row",
             flexBasis: 4,
             justifyContent: "center",
+
           }}
         >
           {timesWithDistance.map((el) => {
@@ -214,7 +216,7 @@ export default function TimeListUsers({ navigation }) {
                   style={{
                     textAlign: "right",
                     fontWeight: "bold",
-                    color: "green",
+                    color: "#038f93",
                   }}
                 >
                   -
@@ -227,9 +229,9 @@ export default function TimeListUsers({ navigation }) {
                 </Text>
                 <Divider />
                 {/* Placeholder. Clinic navnet skal findes ved at lede i databasen, når den finder tiderne*/}
-                <Text>Udbyder: {el.clinic}</Text>
-                <Text>Pris: {el.discountPrice}</Text>
-                <Text>
+                <Text style={GlobalStyles.text}>Udbyder: {el.clinic}</Text>
+                <Text style={GlobalStyles.text}>Pris: {el.discountPrice}</Text>
+                <Text style={GlobalStyles.text}>
                   Distance:
                   {el.distance
                     ? ` ${(el.distance / 1000).toFixed(1)}km`
@@ -243,9 +245,11 @@ export default function TimeListUsers({ navigation }) {
     }
   };
   return (
-    <SafeAreaView style={GlobalStyles.container}>
+    <SafeAreaView style={GlobalStyles.userContainer}>
+      <Text style={GlobalStyles.userTitleText}>Pronto</Text>
+      <Text style={GlobalStyles.userUnderTitleText}>Ledige tider nær dig</Text>
       <View style={GlobalStyles.menuOptions}>
-        <Text style={GlobalStyles.text}>Kategori:</Text>
+      <Text style={GlobalStyles.text}>Vælg kategori:</Text>
         <Picker
           onValueChange={(item, index) => {
             setSelectedCategory(item);
@@ -260,24 +264,23 @@ export default function TimeListUsers({ navigation }) {
             <Picker.Item label="..." />
           )}
         </Picker>
-      </View>
-      <View style={GlobalStyles.menuOptions}>
         <CheckBox
           checked={useMaxDist}
-          onPress={() => {
-            setUseMaxDist(!useMaxDist);
+          checkedColor="#038f93"
+          onPress={() =>
+              {setUseMaxDist(!useMaxDist);
           }}
-          title="Brug maksimal distance"
+          title="Vælg distance"
         />
         {useMaxDist ? (
           <View>
-            <Text style={{ color: "#333" }}>
+            <Text style={{ color: "white" }}>
               Maksimum distance: {maxDist} km
             </Text>
             <Slider
               minimumValue={1}
               maximumValue={50}
-              minimumTrackTintColor="#FFFFFF"
+              minimumTrackTintColor="#038f93"
               maximumTrackTintColor="#000000"
               step={1}
               onValueChange={(e) => {

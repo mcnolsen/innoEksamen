@@ -4,7 +4,7 @@ const GlobalStyles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 0,
-    backgroundColor: "#c1dbd8",
+    backgroundColor: "black",
     padding: 10,
   },
   renderItem: {
@@ -21,15 +21,15 @@ const GlobalStyles = StyleSheet.create({
   },
   homeText: {
     fontFamily: "Roboto",
-    fontSize: 80,
-    color: "#333",
+    fontSize: 100,
+    color: "white",
     textAlign: "center",
     top: "86%",
     fontWeight: "bold",
   },
   titleText: {
     fontSize: 24,
-    color: "#333",
+    color: "white",
     textAlign: "center",
     fontWeight: "bold",
   },
@@ -38,7 +38,7 @@ const GlobalStyles = StyleSheet.create({
     lineHeight: 21,
     letterSpacing: 0.25,
     fontWeight: "bold",
-    color: "#333",
+    color: "white",
   },
   button: {
     alignItems: "center",
@@ -47,7 +47,7 @@ const GlobalStyles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     elevation: 3,
-    backgroundColor: "#059095",
+    backgroundColor: "#186970",
     borderRadius: 10,
     height: "25%",
   },
@@ -60,18 +60,17 @@ const GlobalStyles = StyleSheet.create({
   },
   label: {
     fontWeight: "bold",
-    color: "#333",
+    color: "white",
   },
   listItem: {
     borderWidth: 1,
     borderRadius: 10,
-    borderColor:'white',
     marginTop: 5,
     margin: 5,
     padding: 5,
     width: "45%",
-    minHeight: 60
-    
+    minHeight: 60,
+    backgroundColor: "#333",
   },
   listButton: {
     alignItems: "center",
@@ -80,7 +79,7 @@ const GlobalStyles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     elevation: 3,
-    backgroundColor: "#059095",
+    backgroundColor: "black",
     borderRadius: 10,
     height: "50%",
   },
@@ -88,10 +87,35 @@ const GlobalStyles = StyleSheet.create({
     flexDirection: "row",
   },
   menuOptions: {
-      padding: 5,
+      padding: 10,
       borderRadius: 10,
-      borderColor: 'white',
       borderWidth: 1,
+      backgroundColor: "#333",
+      width: "92%",
+      marginLeft: "auto",
+      marginRight: "auto",
+  },
+  userContainer: {
+      flex: 1,
+      marginBottom: 0,
+      backgroundColor: "black",
+      padding: 10,
+  },
+  userTitleText: {
+      fontFamily: "Roboto",
+      fontSize: 80,
+      color: "white",
+      textAlign: "center",
+      fontWeight: "bold",
+      top: -60,
+  },
+  userUnderTitleText: {
+    fontFamily: "Roboto",
+    fontSize: 20,
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+    top: -60,
   },
 });
 
