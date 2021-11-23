@@ -34,6 +34,7 @@ export default function UserTimeDetails({ route, navigation }) {
       <SafeAreaView style={GlobalStyles.userContainer}>
         <Text style={GlobalStyles.userTitleText}>Pronto</Text>
         <Text style={GlobalStyles.userUnderTitleText}>Oplysninger om tiden</Text>
+        <View style={GlobalStyles.menuOptions}>
         <Text style={GlobalStyles.text}>Udbyder: {route.params.time.clinic}</Text>
         <Text style={GlobalStyles.text}>Kategori: {category.name}</Text>
         <Text style={GlobalStyles.text}>Lokation: {location.addressString}</Text>
@@ -43,6 +44,7 @@ export default function UserTimeDetails({ route, navigation }) {
         </Text>
             <Text style={GlobalStyles.text}>Rating:</Text>
             <Rating readonly startingValue={rating} fractions={1} />
+        </View>
       </SafeAreaView>
   );
 }
