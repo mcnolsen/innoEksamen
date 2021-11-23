@@ -282,8 +282,9 @@ export default function TimeListUsers({ navigation }) {
   return (
     <SafeAreaView style={GlobalStyles.userContainer}>
       <Text style={GlobalStyles.userTitleText}>Pronto</Text>
+      <Text style={GlobalStyles.userUnderTitleText}>Ledige tider nær dig</Text>
       <View style={GlobalStyles.menuOptions}>
-        <Text style={GlobalStyles.text}>Kategori:</Text>
+        <Text style={GlobalStyles.text}>Vælg kategori:</Text>
         <Picker
           onValueChange={(item, index) => {
             setSelectedCategory(item);
@@ -303,17 +304,17 @@ export default function TimeListUsers({ navigation }) {
           onPress={() => {
             setUseMaxDist(!useMaxDist);
           }}
-          title="Brug maksimal distance"
+          title="Vælg distance"
         />
         {useMaxDist ? (
           <View>
-            <Text style={{ color: "#333" }}>
+            <Text style={{ color: "white" }}>
               Maksimum distance: {maxDist} km
             </Text>
             <Slider
               minimumValue={1}
               maximumValue={50}
-              minimumTrackTintColor="#FFFFFF"
+              minimumTrackTintColor="orange"
               maximumTrackTintColor="#000000"
               step={1}
               onValueChange={(e) => {

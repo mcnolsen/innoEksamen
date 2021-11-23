@@ -4,7 +4,7 @@ const GlobalStyles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 0,
-    backgroundColor: "#afccca",
+    backgroundColor: "black",
     padding: 10,
   },
   renderItem: {
@@ -22,14 +22,14 @@ const GlobalStyles = StyleSheet.create({
   homeText: {
     fontFamily: "Roboto",
     fontSize: 80,
-    color: "#333",
+    color: "white",
     textAlign: "center",
     top: "86%",
     fontWeight: "bold",
   },
   titleText: {
     fontSize: 24,
-    color: "#333",
+    color: "white",
     textAlign: "center",
     fontWeight: "bold",
   },
@@ -38,7 +38,7 @@ const GlobalStyles = StyleSheet.create({
     lineHeight: 21,
     letterSpacing: 0.25,
     fontWeight: "bold",
-    color: "#333",
+    color: "white",
   },
   button: {
     alignItems: "center",
@@ -47,7 +47,7 @@ const GlobalStyles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     elevation: 3,
-    backgroundColor: "#059095",
+    backgroundColor: "#186970",
     borderRadius: 10,
     height: "25%",
   },
@@ -60,18 +60,17 @@ const GlobalStyles = StyleSheet.create({
   },
   label: {
     fontWeight: "bold",
-    color: "#333",
+    color: "white",
   },
   listItem: {
     borderWidth: 1,
     borderRadius: 10,
-    borderColor:'#066f76',
     marginTop: 5,
     margin: 5,
     padding: 5,
     width: "45%",
     minHeight: 60,
-    backgroundColor: "white",
+    backgroundColor: "#186970",
   },
   listButton: {
     alignItems: "center",
@@ -80,7 +79,7 @@ const GlobalStyles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     elevation: 3,
-    backgroundColor: "#059095",
+    backgroundColor: "#186970",
     borderRadius: 10,
     height: "50%",
   },
@@ -90,9 +89,8 @@ const GlobalStyles = StyleSheet.create({
   menuOptions: {
       padding: 10,
       borderRadius: 10,
-      borderColor: '#066f76',
       borderWidth: 1,
-      backgroundColor: 'white',
+      backgroundColor: "#186970",
       width: "92%",
       marginLeft: "auto",
       marginRight: "auto",
@@ -100,15 +98,24 @@ const GlobalStyles = StyleSheet.create({
   userContainer: {
       flex: 1,
       marginBottom: 0,
-      backgroundColor: "#086f74",
+      backgroundColor: "black",
       padding: 10,
   },
   userTitleText: {
       fontFamily: "Roboto",
       fontSize: 80,
-      color: "#333",
+      color: "white",
       textAlign: "center",
       fontWeight: "bold",
+      top: -60,
+  },
+  userUnderTitleText: {
+    fontFamily: "Roboto",
+    fontSize: 20,
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+    top: -60,
   },
 });
 
