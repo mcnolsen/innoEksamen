@@ -265,9 +265,9 @@ export default function TimeListUsers({ navigation }) {
                 </Text>
                 <Divider />
                 {/* Placeholder. Clinic navnet skal findes ved at lede i databasen, når den finder tiderne*/}
-                <Text>Udbyder: {el.clinic}</Text>
-                <Text>Pris: {el.discountPrice}</Text>
-                <Text>
+                <Text style={GlobalStyles.text}>Udbyder: {el.clinic}</Text>
+                <Text style={GlobalStyles.text}>Pris: {el.discountPrice}</Text>
+                <Text style={GlobalStyles.text}>
                   Distance:
                   {el.distance
                     ? ` ${(el.distance / 1000).toFixed(1)}`
@@ -285,7 +285,7 @@ export default function TimeListUsers({ navigation }) {
       <Text style={GlobalStyles.userTitleText}>Pronto</Text>
       <Text style={GlobalStyles.userUnderTitleText}>Ledige tider nær dig</Text>
       <View style={GlobalStyles.menuOptions}>
-        <Text style={GlobalStyles.text}>Vælg kategori:</Text>
+      <Text style={GlobalStyles.text}>Vælg kategori:</Text>
         <Picker
           onValueChange={(item, index) => {
             setSelectedCategory(item);

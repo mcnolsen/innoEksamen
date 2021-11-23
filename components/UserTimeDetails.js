@@ -32,16 +32,17 @@ export default function UserTimeDetails({ route, navigation }) {
   }, []);
   return (
       <SafeAreaView style={GlobalStyles.userContainer}>
-      <Text style={GlobalStyles.text}>Udbyder: {route.params.time.clinic}</Text>
-    <Text style={GlobalStyles.text}>Kategori: {category.name}</Text>
-    <Text style={GlobalStyles.text}>Lokation: {location.addressString}</Text>
-    <Text style={GlobalStyles.text}>Normal pris: {route.params.time.price}</Text>
-    <Text style={GlobalStyles.text}>Ny pris: {route.params.time.discountPrice}</Text>
-    <Text style={GlobalStyles.text}>Beskrivelse:{" "}
-        {route.params.time.description ? route.params.time.description : null}
-      </Text>
-    <Text style={GlobalStyles.text}>Rating:</Text>
-      <Rating readonly startingValue={rating} fractions={1} />
-    </SafeAreaView>
+        <Text style={GlobalStyles.userTitleText}>Pronto</Text>
+        <Text style={GlobalStyles.userUnderTitleText}>Oplysninger om tiden</Text>
+        <Text style={GlobalStyles.text}>Udbyder: {route.params.time.clinic}</Text>
+        <Text style={GlobalStyles.text}>Kategori: {category.name}</Text>
+        <Text style={GlobalStyles.text}>Lokation: {location.addressString}</Text>
+        <Text style={GlobalStyles.text}>Normal pris: {route.params.time.price}</Text>
+        <Text style={GlobalStyles.text}>Ny pris: {route.params.time.discountPrice}</Text>
+        <Text style={GlobalStyles.text}>Beskrivelse:{" "} {route.params.time.description ? route.params.time.description : null}
+        </Text>
+            <Text style={GlobalStyles.text}>Rating:</Text>
+            <Rating readonly startingValue={rating} fractions={1} />
+      </SafeAreaView>
   );
 }

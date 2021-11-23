@@ -93,7 +93,7 @@ const UserTimeDetailsStackNavigation = () => {
       <Stack.Screen
         name="UserTimeDetails"
         component={UserTimeDetails}
-        options={{ title: "Yderligere oplysninger" }}
+        options={{ title: "Tilbage" }}
       />
     </Stack.Navigator>
   );
