@@ -252,7 +252,7 @@ export default function TimeListUsers({ navigation }) {
                   style={{
                     textAlign: "right",
                     fontWeight: "bold",
-                    color: "orange",
+                    color: "#038f93",
                   }}
                 >
                   -
@@ -315,7 +315,7 @@ export default function TimeListUsers({ navigation }) {
             <Slider
               minimumValue={1}
               maximumValue={50}
-              minimumTrackTintColor="orange"
+              minimumTrackTintColor="#038f93"
               maximumTrackTintColor="#000000"
               step={1}
               onValueChange={(e) => {

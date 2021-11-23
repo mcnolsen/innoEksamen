@@ -70,7 +70,7 @@ const GlobalStyles = StyleSheet.create({
     padding: 5,
     width: "45%",
     minHeight: 60,
-    backgroundColor: "#2f6f76",
+    backgroundColor: "#333",
   },
   listButton: {
     alignItems: "center",
@@ -90,7 +90,7 @@ const GlobalStyles = StyleSheet.create({
       padding: 10,
       borderRadius: 10,
       borderWidth: 1,
-      backgroundColor: "#2f6f76",
+      backgroundColor: "#333",
       width: "92%",
       marginLeft: "auto",
       marginRight: "auto",
