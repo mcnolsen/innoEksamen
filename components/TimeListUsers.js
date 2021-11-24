@@ -91,7 +91,7 @@ export default function TimeListUsers({ navigation }) {
           let dataValues = Object.values(data);
           let dataKeys = Object.keys(data);
           //Få id med i objektet, samt distance beregninger
-          if (dataKeys && dataValues && userLocation) {
+          if (dataKeys && dataValues) {
             let data = dataValues.map((el, index) => {
               return {
                 id: dataKeys[index],
