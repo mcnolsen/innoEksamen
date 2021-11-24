@@ -7,7 +7,7 @@ import {
   Button,
   Alert,
   ActivityIndicator,
-  Pressable, ImageBackground,
+  Pressable, ImageBackground, ScrollView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,7 +22,6 @@ import { getDistance } from "geolib";
 import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
-import {getBackgroundColor} from "react-native/Libraries/LogBox/UI/LogBoxStyle";
 
 export default function TimeListUsers({ navigation }) {
   const [times, setTimes] = useState([]);
@@ -179,7 +178,7 @@ export default function TimeListUsers({ navigation }) {
 
           }}
         >
-          {timesWithDistance.map((el) => {
+          {times.map((el) => {
             console.log((el.distance / 1000).toFixed(1));
             return (
               <Pressable
@@ -222,9 +221,9 @@ export default function TimeListUsers({ navigation }) {
     }
   };
   return (
-    <ScrollView style={GlobalStyles.userContainer}>
+    <ScrollView>
 
-    <SafeAreaView style={GlobalStyles.userContainer}>
+    <SafeAreaView style={GlobalStyles.userContainer, {marginTop: 15}}>
       <Text style={GlobalStyles.userTitleText}>Pronto</Text>
       <Text style={GlobalStyles.userUnderTitleText}>Ledige tider nær dig</Text>
       <View style={GlobalStyles.menuOptions}>
@@ -277,6 +276,7 @@ export default function TimeListUsers({ navigation }) {
       />
     </SafeAreaView>
     </ScrollView>
+
 
   );
 }
