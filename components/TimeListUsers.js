@@ -89,12 +89,18 @@ export default function TimeListUsers({ navigation }) {
           let dataValues = Object.values(data);
           let dataKeys = Object.keys(data);
           //Få id med i objektet, samt distance beregninger
-          if (dataKeys && dataValues) {
+          if (dataKeys && dataValues && userLocation) {
             let data = dataValues.map((el, index) => {
-              findLocationDetails(el.location);
               return {
                 id: dataKeys[index],
                 ...el,
+                distance: getDistance(
+                  {
+                    longitude: userLocation.coords.longitude,
+                    latitude: userLocation.coords.latitude,
+                  },
+                  { longitude: el.location.lon, latitude: el.location.lan }
+                )
               };
             });
             setTimes(data);
@@ -106,39 +112,6 @@ export default function TimeListUsers({ navigation }) {
       });
   }, [selectedCategory]);
 
-  const findLocationDetails = async (location_id) => {
-    //Leder efter, om der allerede er data for en lokation med dette id, i de lokationer, som ikke automatisk bliver gemt i tids objektet
-    let knownLocation = locations.find((el) => {
-      return el.id === location_id;
-    });
-    if (knownLocation) {
-      return knownLocation;
-    } else {
-      //Finder locations
-      let queryLocation = firebase.database().ref(`/Locations/${location_id}`);
-      queryLocation.once("value", (snapshot) => {
-        const data = snapshot.val();
-        if (data && userLocation) {
-          let distance = getDistance(
-            {
-              longitude: userLocation.coords.longitude,
-              latitude: userLocation.coords.latitude,
-            },
-            { longitude: data.lon, latitude: data.lan }
-          );
-
-          let locationToAdd = { id: location_id, distance: distance, ...data };
-
-          let newLocations = [...locations, locationToAdd];
-          setLocations(newLocations);
-        }
-      });
-      let knownLocationAgain = locations.find((el) => {
-        return el.id === location_id;
-      });
-      return knownLocationAgain;
-    }
-  };
 
   //Confirmation of the booking is required, so to prevent accidental bookings.
   const confirmBooking = (item, index) => {
@@ -162,31 +135,8 @@ export default function TimeListUsers({ navigation }) {
   };
   const TimesListComponent = (props) => {
     const { times, didSearch, locations } = props;
-    const [timesWithDistance, setTimesWithDistance] = useState([]);
 
-    useEffect(() => {
-      if (locations && locations.length > 0) {
-        let timesWithDistanceToAdd = times.map((el) => {
-          let location = locations.find((element) => {
-            return element.id === el.location;
-          });
-          console.log(location);
-          if (location) {
-            return {
-              ...el,
-              //Beregn distance mellem lokations koordinater og brugeren.
-              distance: location.distance,
-            };
-          } else {
-            return el;
-          }
-        });
-        console.log(timesWithDistanceToAdd);
-        setTimesWithDistance(timesWithDistanceToAdd);
-      }
-    }, [times]);
-
-    if (!times && !didSearch && (!locations || locations.length === 0)) {
+    if (!times && !didSearch) {
       return <ActivityIndicator />;
     } else if (!times && didSearch) {
       return <Text>Ingen tilgængelige tider</Text>;
@@ -202,8 +152,7 @@ export default function TimeListUsers({ navigation }) {
 
           }}
         >
-          {timesWithDistance.map((el) => {
-            console.log((el.distance / 1000).toFixed(1));
+          {times.map((el) => {
             return (
               <Pressable
                 key={el.id}
