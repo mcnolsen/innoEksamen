@@ -2,6 +2,7 @@ import React from 'react';
 import firebase from 'firebase';
 import {Text,View, StyleSheet, TextInput, Button, Alert, ScrollView, SafeAreaView, } from 'react-native';
 import {useEffect, useState} from "react";
+import GlobalStyles from "../styles/GlobalStyles";
 
 const Add_edit_time = ({navigation,route}) => {
     const initialState = {
@@ -98,6 +99,7 @@ const Add_edit_time = ({navigation,route}) => {
 
 export default Add_edit_time;
 
+/*
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -118,3 +120,4 @@ const styles = StyleSheet.create({
         flex: 1
     },
 });
+*/
