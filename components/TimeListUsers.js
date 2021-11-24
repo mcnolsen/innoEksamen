@@ -135,7 +135,7 @@ export default function TimeListUsers({ navigation }) {
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   const TimesListComponent = (props) => {
-    const { times, didSearch, locations } = props;
+    const { times, didSearch } = props;
 
     if (!times && !didSearch) {
       return <ActivityIndicator />;
@@ -195,7 +195,8 @@ export default function TimeListUsers({ navigation }) {
     }
   };
   return (
-    <ScrollView>
+    <ScrollView style={GlobalStyles.userContainer}>
+
     <SafeAreaView style={GlobalStyles.userContainer}>
       <Text style={GlobalStyles.userTitleText}>Pronto</Text>
       <Text style={GlobalStyles.userUnderTitleText}>Ledige tider nær dig</Text>
@@ -245,10 +246,10 @@ export default function TimeListUsers({ navigation }) {
       <TimesListComponent
         times={times}
         didSearch={didSearch}
-        locations={locations}
         key={times}
       />
     </SafeAreaView>
     </ScrollView>
+
   );
 }
