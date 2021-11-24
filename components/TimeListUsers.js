@@ -119,7 +119,7 @@ export default function TimeListUsers({ navigation }) {
         }
         setDidSearch(true);
       });
-  }, [selectedCategory]);
+  }, [selectedCategory, userLocation]);
 
   //Confirmation of the booking is required, so to prevent accidental bookings.
   const confirmBooking = (item, index) => {
@@ -143,7 +143,7 @@ export default function TimeListUsers({ navigation }) {
   };
   const TimesListComponent = (props) => {
     const { times, didSearch, locations } = props;
-
+    //Hvis der ikke er blevet søgt endnu
     if (!times && !didSearch) {
       return <ActivityIndicator />;
     } else if (!times && didSearch) {
@@ -202,7 +202,7 @@ export default function TimeListUsers({ navigation }) {
   };
   return (
     <ScrollView style={GlobalStyles.userContainer}>
-      <SafeAreaView style={GlobalStyles.userContainer}>
+      <SafeAreaView style={GlobalStyles.userContainer, {marginTop: 15}}>
         <Text style={GlobalStyles.userTitleText}>Pronto</Text>
         <Text style={GlobalStyles.userUnderTitleText}>
           Ledige tider nær dig
