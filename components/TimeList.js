@@ -128,7 +128,6 @@ export default function TimeList({ navigation }) {
       }
     }
     //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
-    if (item.date) {
       return (
         <SafeAreaView style={GlobalStyles.container}>
           <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
@@ -150,22 +149,6 @@ export default function TimeList({ navigation }) {
             </Pressable>
             </View>
             </SafeAreaView>
-    );
-    };
-    return (
-      <SafeAreaView style={GlobalStyles.container}>
-        <Text>{`Tid: ${item.time}. Sted: ${item.clinic}, ${
-          location ? location.name : ""
-        }. Pris: ${item.price}`}</Text>
-        <View style={GlobalStyles.button}>
-          <Button
-            title="Ændre"
-            onPress={() => {
-              editTime(item);
-            }}
-          ></Button>
-        </View>
-      </SafeAreaView>
     );
   };
   //Confirmation of the booking is required, so to prevent accidental bookings.
