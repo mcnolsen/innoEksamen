@@ -109,9 +109,7 @@ export default function Locations({ navigation, route }) {
             onPress={() => {
               confirmDelete(item, index);
             }}
-            style={GlobalStyles.button}
-          >
-            <Text style={GlobalStyles.buttonText}>Slet</Text>
+          ><Text style={GlobalStyles.buttonText}>Slet</Text>
           </Pressable>
         </View>
       </View>

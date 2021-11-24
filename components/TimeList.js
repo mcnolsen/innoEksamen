@@ -139,12 +139,11 @@ export default function TimeList({ navigation }) {
           }. Udbyder: ${item.clinic}. Pris: ${item.price}. Distance: ${
             item.distance ? `${item.distance}m` : `Kan ikke findes.`
           }`}</Text>
-        <View style={GlobalStyles.listButton}>
+        <View style={GlobalStyles.button}>
             <Pressable
         onPress={() => {
             editTime(item, index);
         }}
-        style={GlobalStyles.button}
             ><Text style={GlobalStyles.buttonText}>Ændre</Text>
             </Pressable>
             </View>

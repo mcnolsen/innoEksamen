@@ -38,7 +38,7 @@ const GlobalStyles = StyleSheet.create({
     lineHeight: 21,
     letterSpacing: 0.25,
     fontWeight: "bold",
-    color: "white",
+    color: "#333",
   },
   button: {
     alignItems: "center",

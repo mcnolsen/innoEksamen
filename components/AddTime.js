@@ -260,10 +260,9 @@ export default function AddTime({ navigation, route }) {
           }}
           placeholder="Indsæt eventuelt en beskrivelse..."
         />
-      </View>
-
-      <Button title="Gem" onPress={() => handleSave()} color="#333" />
-    </SafeAreaView>
+      <Button title="Gem" onPress={() => handleSave()} color="red" />
+        </View>
+     </SafeAreaView>
   );
 }
 
@@ -312,7 +311,7 @@ const DateAndTimeComponent = (props) => {
         onPress={() => {
           setShowDate(true);
         }}
-        style={GlobalStyles.button}
+        style={GlobalStyles.pickerButton}
       >
         <Text style={GlobalStyles.buttonText}>Vælg Dato</Text>
       </Pressable>
@@ -325,40 +324,10 @@ const DateAndTimeComponent = (props) => {
         onPress={() => {
           setShowTime(true);
         }}
-        style={GlobalStyles.button}
+        style={GlobalStyles.pickerButton}
       >
         <Text style={GlobalStyles.buttonText}>Vælg Tid</Text>
       </Pressable>
     </View>
   );
 };
-
-/*//Flyttet til GlobalStyles, men slettes først når det virker!
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "40%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    elevation: 3,
-    backgroundColor: "navy",
-    borderRadius: 10,
-    height: "25%",
-    flex: 2,
-  },
-  buttonTXT: {
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: "bold",
-    letterSpacing: 0.25,
-    color: "white",
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 21,
-    letterSpacing: 0.25,
-    fontWeight: "bold",
-  },
-});
-*/
