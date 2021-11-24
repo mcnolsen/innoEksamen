@@ -23,6 +23,7 @@ import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
 import {getBackgroundColor} from "react-native/Libraries/LogBox/UI/LogBoxStyle";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function TimeListUsers({ navigation }) {
   const [times, setTimes] = useState([]);
@@ -194,6 +195,7 @@ export default function TimeListUsers({ navigation }) {
     }
   };
   return (
+    <ScrollView style={GlobalStyles.userContainer}>
     <SafeAreaView style={GlobalStyles.userContainer}>
       <Text style={GlobalStyles.userTitleText}>Pronto</Text>
       <Text style={GlobalStyles.userUnderTitleText}>Ledige tider nær dig</Text>
@@ -247,5 +249,6 @@ export default function TimeListUsers({ navigation }) {
         key={times}
       />
     </SafeAreaView>
+    </ScrollView>
   );
 }
