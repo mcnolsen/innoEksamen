@@ -13,22 +13,13 @@ export default function UserTimeDetails({ route, navigation }) {
     let queryCat = firebase
       .database()
       .ref(`/Categories/${route.params.time.category}`);
-    let queryLoc = firebase
-      .database()
-      .ref(`/Locations/${route.params.time.location}`);
-
     queryCat.on("value", (snapshot) => {
       let data = snapshot.val();
       if (data) {
         setCategory(data);
       }
     });
-    queryLoc.on("value", (snapshot) => {
-      let data = snapshot.val();
-      if (data) {
-        setLocation(data);
-      }
-    });
+
   }, []);
   return (
       <SafeAreaView style={GlobalStyles.userContainer}>
@@ -37,10 +28,10 @@ export default function UserTimeDetails({ route, navigation }) {
         <View style={GlobalStyles.menuOptions}>
         <Text style={GlobalStyles.text}>Udbyder: {route.params.time.clinic}</Text>
         <Text style={GlobalStyles.text}>Kategori: {category.name}</Text>
-        <Text style={GlobalStyles.text}>Lokation: {location.addressString}</Text>
+        <Text style={GlobalStyles.text}>Lokation: {route.params.time.location.addressString}</Text>
         <Text style={GlobalStyles.text}>Normal pris: {route.params.time.price}</Text>
         <Text style={GlobalStyles.text}>Ny pris: {route.params.time.discountPrice}</Text>
-        <Text style={GlobalStyles.text}>Beskrivelse:{" "} {route.params.time.description ? route.params.time.description : null}
+        <Text style={GlobalStyles.text}>Beskrivelse: {route.params.time.description ? route.params.time.description : null}
         </Text>
             <Text style={GlobalStyles.text}>Rating:</Text>
             <Rating readonly startingValue={rating} fractions={1} />
