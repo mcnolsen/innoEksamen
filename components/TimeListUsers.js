@@ -7,7 +7,8 @@ import {
   Button,
   Alert,
   ActivityIndicator,
-  Pressable, ImageBackground,
+  Pressable,
+  ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,7 +23,7 @@ import { getDistance } from "geolib";
 import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
-import {getBackgroundColor} from "react-native/Libraries/LogBox/UI/LogBoxStyle";
+import { getBackgroundColor } from "react-native/Libraries/LogBox/UI/LogBoxStyle";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function TimeListUsers({ navigation }) {
@@ -95,13 +96,20 @@ export default function TimeListUsers({ navigation }) {
               return {
                 id: dataKeys[index],
                 ...el,
-                distance: getDistance(
-                  {
-                    longitude: userLocation.coords.longitude,
-                    latitude: userLocation.coords.latitude,
-                  },
-                  { longitude: el.location.lon, latitude: el.location.lan }
-                )
+                //Beregn distance mellem lokations koordinater og brugeren.
+                distance:
+                  el.location.lon && el.location.lan && userLocation
+                    ? getDistance(
+                        {
+                          longitude: userLocation.coords.longitude,
+                          latitude: userLocation.coords.latitude,
+                        },
+                        {
+                          longitude: el.location.lon,
+                          latitude: el.location.lan,
+                        }
+                      )
+                    : false,
               };
             });
             setTimes(data);
@@ -112,7 +120,6 @@ export default function TimeListUsers({ navigation }) {
         setDidSearch(true);
       });
   }, [selectedCategory]);
-
 
   //Confirmation of the booking is required, so to prevent accidental bookings.
   const confirmBooking = (item, index) => {
@@ -150,7 +157,6 @@ export default function TimeListUsers({ navigation }) {
             flexDirection: "row",
             flexBasis: 4,
             justifyContent: "center",
-
           }}
         >
           {times.map((el) => {
@@ -196,59 +202,61 @@ export default function TimeListUsers({ navigation }) {
   };
   return (
     <ScrollView style={GlobalStyles.userContainer}>
-    <SafeAreaView style={GlobalStyles.userContainer}>
-      <Text style={GlobalStyles.userTitleText}>Pronto</Text>
-      <Text style={GlobalStyles.userUnderTitleText}>Ledige tider nær dig</Text>
-      <View style={GlobalStyles.menuOptions}>
-      <Text style={GlobalStyles.text}>Vælg kategori:</Text>
-        <Picker
-          onValueChange={(item, index) => {
-            setSelectedCategory(item);
-          }}
-          selectedValue={selectedCategory}
-        >
-          {categories ? (
-            categories.map((e, index) => {
-              return <Picker.Item label={e.name} value={e.id} key={index} />;
-            })
-          ) : (
-            <Picker.Item label="..." />
-          )}
-        </Picker>
-        <CheckBox
-          checked={useMaxDist}
-          checkedColor="#038f93"
-          onPress={() =>
-              {setUseMaxDist(!useMaxDist);
-          }}
-          title="Vælg distance"
+      <SafeAreaView style={GlobalStyles.userContainer}>
+        <Text style={GlobalStyles.userTitleText}>Pronto</Text>
+        <Text style={GlobalStyles.userUnderTitleText}>
+          Ledige tider nær dig
+        </Text>
+        <View style={GlobalStyles.menuOptions}>
+          <Text style={GlobalStyles.text}>Vælg kategori:</Text>
+          <Picker
+            onValueChange={(item, index) => {
+              setSelectedCategory(item);
+            }}
+            selectedValue={selectedCategory}
+          >
+            {categories ? (
+              categories.map((e, index) => {
+                return <Picker.Item label={e.name} value={e.id} key={index} />;
+              })
+            ) : (
+              <Picker.Item label="..." />
+            )}
+          </Picker>
+          <CheckBox
+            checked={useMaxDist}
+            checkedColor="#038f93"
+            onPress={() => {
+              setUseMaxDist(!useMaxDist);
+            }}
+            title="Vælg distance"
+          />
+          {useMaxDist ? (
+            <View>
+              <Text style={{ color: "white" }}>
+                Maksimum distance: {maxDist} km
+              </Text>
+              <Slider
+                minimumValue={1}
+                maximumValue={50}
+                minimumTrackTintColor="#038f93"
+                maximumTrackTintColor="#000000"
+                step={1}
+                onValueChange={(e) => {
+                  setMaxDist(e);
+                }}
+                value={maxDist}
+              />
+            </View>
+          ) : null}
+        </View>
+        <TimesListComponent
+          times={times}
+          didSearch={didSearch}
+          locations={locations}
+          key={times}
         />
-        {useMaxDist ? (
-          <View>
-            <Text style={{ color: "white" }}>
-              Maksimum distance: {maxDist} km
-            </Text>
-            <Slider
-              minimumValue={1}
-              maximumValue={50}
-              minimumTrackTintColor="#038f93"
-              maximumTrackTintColor="#000000"
-              step={1}
-              onValueChange={(e) => {
-                setMaxDist(e);
-              }}
-              value={maxDist}
-            />
-          </View>
-        ) : null}
-      </View>
-      <TimesListComponent
-        times={times}
-        didSearch={didSearch}
-        locations={locations}
-        key={times}
-      />
-    </SafeAreaView>
+      </SafeAreaView>
     </ScrollView>
   );
 }
