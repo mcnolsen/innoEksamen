@@ -7,7 +7,7 @@ import {
   Button,
   Alert,
   ActivityIndicator,
-  Pressable, ImageBackground, ScrollView
+  Pressable, ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,6 +22,8 @@ import { getDistance } from "geolib";
 import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
+import {getBackgroundColor} from "react-native/Libraries/LogBox/UI/LogBoxStyle";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function TimeListUsers({ navigation }) {
   const [times, setTimes] = useState([]);
@@ -88,12 +90,18 @@ export default function TimeListUsers({ navigation }) {
           let dataValues = Object.values(data);
           let dataKeys = Object.keys(data);
           //Få id med i objektet, samt distance beregninger
-          if (dataKeys && dataValues) {
+          if (dataKeys && dataValues && userLocation) {
             let data = dataValues.map((el, index) => {
-              findLocationDetails(el.location);
               return {
                 id: dataKeys[index],
                 ...el,
+                distance: getDistance(
+                  {
+                    longitude: userLocation.coords.longitude,
+                    latitude: userLocation.coords.latitude,
+                  },
+                  { longitude: el.location.lon, latitude: el.location.lan }
+                )
               };
             });
             setTimes(data);
@@ -105,39 +113,6 @@ export default function TimeListUsers({ navigation }) {
       });
   }, [selectedCategory]);
 
-  const findLocationDetails = async (location_id) => {
-    //Leder efter, om der allerede er data for en lokation med dette id, i de lokationer, som ikke automatisk bliver gemt i tids objektet
-    let knownLocation = locations.find((el) => {
-      return el.id === location_id;
-    });
-    if (knownLocation) {
-      return knownLocation;
-    } else {
-      //Finder locations
-      let queryLocation = firebase.database().ref(`/Locations/${location_id}`);
-      queryLocation.once("value", (snapshot) => {
-        const data = snapshot.val();
-        if (data && userLocation) {
-          let distance = getDistance(
-            {
-              longitude: userLocation.coords.longitude,
-              latitude: userLocation.coords.latitude,
-            },
-            { longitude: data.lon, latitude: data.lan }
-          );
-
-          let locationToAdd = { id: location_id, distance: distance, ...data };
-
-          let newLocations = [...locations, locationToAdd];
-          setLocations(newLocations);
-        }
-      });
-      let knownLocationAgain = locations.find((el) => {
-        return el.id === location_id;
-      });
-      return knownLocationAgain;
-    }
-  };
 
   //Confirmation of the booking is required, so to prevent accidental bookings.
   const confirmBooking = (item, index) => {
@@ -160,9 +135,9 @@ export default function TimeListUsers({ navigation }) {
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
   const TimesListComponent = (props) => {
-    const { times, didSearch } = props;
+    const { times, didSearch, locations } = props;
 
-    if (!times && !didSearch && (!locations || locations.length === 0)) {
+    if (!times && !didSearch) {
       return <ActivityIndicator />;
     } else if (!times && didSearch) {
       return <Text>Ingen tilgængelige tider</Text>;
@@ -179,7 +154,6 @@ export default function TimeListUsers({ navigation }) {
           }}
         >
           {times.map((el) => {
-            console.log((el.distance / 1000).toFixed(1));
             return (
               <Pressable
                 key={el.id}
@@ -221,9 +195,8 @@ export default function TimeListUsers({ navigation }) {
     }
   };
   return (
-    <ScrollView>
-
-    <SafeAreaView style={GlobalStyles.userContainer, {marginTop: 15}}>
+    <ScrollView style={GlobalStyles.userContainer}>
+    <SafeAreaView style={GlobalStyles.userContainer}>
       <Text style={GlobalStyles.userTitleText}>Pronto</Text>
       <Text style={GlobalStyles.userUnderTitleText}>Ledige tider nær dig</Text>
       <View style={GlobalStyles.menuOptions}>
@@ -272,11 +245,10 @@ export default function TimeListUsers({ navigation }) {
       <TimesListComponent
         times={times}
         didSearch={didSearch}
+        locations={locations}
         key={times}
       />
     </SafeAreaView>
     </ScrollView>
-
-
   );
 }

@@ -62,11 +62,12 @@ export default function Categories({ navigation, route }) {
     return (
       <View style={GlobalStyles.listItem}>
         <Text>{item.name}</Text>
-        <View style={GlobalStyles.button}>
+        <View style={GlobalStyles.listButton}>
           <Pressable
             onPress={() => {
               confirmDelete(item, index);
             }}
+            style={GlobalStyles.button}
           ><Text style={GlobalStyles.buttonText}>Slet</Text>
           </Pressable>
         </View>
