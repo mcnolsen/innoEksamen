@@ -54,10 +54,6 @@ export default function AddTime({ navigation, route }) {
       );
     } else {
       try {
-        let locationsIndex = locationsKeys.findIndex((el) => {
-          return el === selectedLocation;
-        });
-        let locationValues = locationsArray[locationsIndex];
         firebase
           .database()
           .ref("/Times/")
@@ -72,7 +68,7 @@ export default function AddTime({ navigation, route }) {
             }`,
             price: price,
             discountPrice: discountPrice,
-            location: { id: `${selectedLocation}`, ...locationValues},
+            location: `${selectedLocation}`,
             clinic: clinic,
             status: 1,
             description: description,
@@ -142,127 +138,128 @@ export default function AddTime({ navigation, route }) {
   const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
     <SafeAreaView style={GlobalStyles.container}>
-      {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
 
-      <View>
-        <DateAndTimeComponent
-          showDate={showDate}
-          showTime={showTime}
-          setShowDate={setShowDate}
-          setShowTime={setShowTime}
-          time={time}
-          date={date}
-        />
-      </View>
+        {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
 
-      {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
-      {showDate ? (
-        <DateTimePicker
-          value={date}
-          onChange={(e, chosenDate) => {
-            //Hvis der vælges et input, og ikke trykkes annuller
-            if (chosenDate) {
-              setNewDate(chosenDate);
-            }
-            //Hvis ios, så går den væk. Ellers ikke. På ios vises det anderledes, derfor er det vigtigt.
-            setShowDate(Platform.OS === "ios");
-          }}
-          mode="date"
-        />
-      ) : (
-        <View></View>
-      )}
-      {showTime ? (
-        <DateTimePicker
-          value={time}
-          onChange={(e, chosenTime) => {
-            //Hvis der vælges et input, og ikke trykkes annuller
-            if (chosenTime) {
-              setTime(chosenTime);
-            }
-            setShowTime(Platform.OS === "ios");
-          }}
-          mode="time"
-        />
-      ) : (
-        <View></View>
-      )}
-      <View>
-        <Text style={GlobalStyles.text}>Lokation:</Text>
-        <Picker
-          onValueChange={(item, index) => {
-            setSelectedLocation(item);
-          }}
-          selectedValue={selectedLocation}
-        >
-          {locations ? (
-            locationsArray.map((e, index) => {
-              return (
-                <Picker.Item
-                  label={e.name}
-                  value={locationsKeys[index]}
-                  key={index}
-                />
-              );
-            })
-          ) : (
-            <Picker.Item label="..." />
-          )}
-        </Picker>
-      </View>
-      <View>
-        <Text style={GlobalStyles.text}>Kategori:</Text>
-        <Picker
-          onValueChange={(item, index) => {
-            setSelectedCategory(item);
-          }}
-          selectedValue={selectedCategory}
-        >
-          {categories ? (
-            categoriesArray.map((e, index) => {
-              return (
-                <Picker.Item
-                  label={e.name}
-                  value={categoriesKeys[index]}
-                  key={index}
-                />
-              );
-            })
-          ) : (
-            <Picker.Item label="..." />
-          )}
-        </Picker>
-      </View>
-      <View>
-        <Text style={GlobalStyles.text}>Normal pris:</Text>
-        <TextInput
-          value={price}
-          onChangeText={(e) => {
-            setPrice(e);
-          }}
-          placeholder="Indsæt pris før rabat..."
-        />
-        <Text style={GlobalStyles.text}>Rabat pris:</Text>
-        <TextInput
-          value={discountPrice}
-          onChangeText={(e) => {
-            setDiscountPrice(e);
-          }}
-          placeholder="Indsæt pris efter rabat..."
-        />
-      </View>
-      <View>
-        <Text style={GlobalStyles.text}>Beskrivelse:</Text>
-        <TextInput
-          value={description}
-          onChangeText={(e) => {
-            setDescription(e);
-          }}
-          placeholder="Indsæt eventuelt en beskrivelse..."
-        />
-      </View>
+        <View>
+          <DateAndTimeComponent
+            showDate={showDate}
+            showTime={showTime}
+            setShowDate={setShowDate}
+            setShowTime={setShowTime}
+            time={time}
+            date={date}
+          />
+        </View>
 
-      <Button title="Gem" onPress={() => handleSave()} color="#333" />
+        {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
+        {showDate ? (
+          <DateTimePicker
+            value={date}
+            onChange={(e, chosenDate) => {
+              //Hvis der vælges et input, og ikke trykkes annuller
+              if (chosenDate) {
+                setNewDate(chosenDate);
+              }
+              //Hvis ios, så går den væk. Ellers ikke. På ios vises det anderledes, derfor er det vigtigt.
+              setShowDate(Platform.OS === "ios");
+            }}
+            mode="date"
+          />
+        ) : (
+          <View></View>
+        )}
+        {showTime ? (
+          <DateTimePicker
+            value={time}
+            onChange={(e, chosenTime) => {
+              //Hvis der vælges et input, og ikke trykkes annuller
+              if (chosenTime) {
+                setTime(chosenTime);
+              }
+              setShowTime(Platform.OS === "ios");
+            }}
+            mode="time"
+          />
+        ) : (
+          <View></View>
+        )}
+        <View>
+          <Text style={GlobalStyles.text}>Lokation:</Text>
+          <Picker
+            onValueChange={(item, index) => {
+              setSelectedLocation(item);
+            }}
+            selectedValue={selectedLocation}
+          >
+            {locations ? (
+              locationsArray.map((e, index) => {
+                return (
+                  <Picker.Item
+                    label={e.name}
+                    value={locationsKeys[index]}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <Picker.Item label="..." />
+            )}
+          </Picker>
+        </View>
+        <View>
+          <Text style={GlobalStyles.text}>Kategori:</Text>
+          <Picker
+            onValueChange={(item, index) => {
+              setSelectedCategory(item);
+            }}
+            selectedValue={selectedCategory}
+          >
+            {categories ? (
+              categoriesArray.map((e, index) => {
+                return (
+                  <Picker.Item
+                    label={e.name}
+                    value={categoriesKeys[index]}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <Picker.Item label="..." />
+            )}
+          </Picker>
+        </View>
+        <View>
+          <Text style={GlobalStyles.text}>Normal pris:</Text>
+          <TextInput
+            value={price}
+            onChangeText={(e) => {
+              setPrice(e);
+            }}
+            placeholder="Indsæt pris før rabat..."
+          />
+          <Text style={GlobalStyles.text}>Rabat pris:</Text>
+          <TextInput
+            value={discountPrice}
+            onChangeText={(e) => {
+              setDiscountPrice(e);
+            }}
+            placeholder="Indsæt pris efter rabat..."
+          />
+        </View>
+        <View>
+          <Text style={GlobalStyles.text}>Beskrivelse:</Text>
+          <TextInput
+            value={description}
+            onChangeText={(e) => {
+              setDescription(e);
+            }}
+            placeholder="Indsæt eventuelt en beskrivelse..."
+          />
+        </View>
+
+        <Button title="Gem" onPress={() => handleSave()} color="#333" />
     </SafeAreaView>
   );
 }
