@@ -23,7 +23,6 @@ import { getDistance } from "geolib";
 import GlobalStyles from "../styles/GlobalStyles";
 
 import firebase from "firebase";
-import { getBackgroundColor } from "react-native/Libraries/LogBox/UI/LogBoxStyle";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function TimeListUsers({ navigation }) {
@@ -81,7 +80,7 @@ export default function TimeListUsers({ navigation }) {
   useEffect(() => {
     //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Times/");
-    //Performs the query
+    //Performer querien
     query
       .orderByChild("category")
       .equalTo(selectedCategory)
@@ -121,26 +120,15 @@ export default function TimeListUsers({ navigation }) {
       });
   }, [selectedCategory, userLocation]);
 
-  //Confirmation of the booking is required, so to prevent accidental bookings.
-  const confirmBooking = (item, index) => {
-    Alert.alert("Er du sikker på?", "Vil du booke denne tid?", [
-      { text: "Fortryd", style: " cancel" },
-      {
-        text: "Book Tid",
-        style: "default",
-        onPress: () => {
-          handleConfirm(item, index);
-        },
-      },
-    ]);
-  };
-  //Hvad der skal ske, hvis der confirmes
+  //Hvad der skal ske, hvis der confirmes. Eventuel start på booking funktionalitet, men bruges ikke lige nu
   const handleConfirm = (item, index) => {
     const bookingsRef = firebase.database().ref(`/Bookings/`);
     bookingsRef.push({ time_id: item.id, customer_name: "Jens Ole" });
     //Sætter status 0, så denne ikke længere ses, samt lagrer booking i 'Bookings'
     firebase.database().ref(`/Times/${id}`).update({ status: 0 });
   };
+
+  //Tidsliste komponentet
   const TimesListComponent = (props) => {
     const { times, didSearch, locations } = props;
     //Hvis der ikke er blevet søgt endnu

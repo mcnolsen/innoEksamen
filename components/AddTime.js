@@ -14,13 +14,12 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import GlobalStyles from "../styles/GlobalStyles";
 
-import { Button, Badge } from "react-native-elements";
+import { Button } from "react-native-elements";
 
-/*//Eksempel på brug af styles
-<View style={GlobalStyles.container}></View>
-*/
 export default function AddTime({ navigation, route }) {
   const [date, setNewDate] = useState(new Date());
+
+  //Hvis ios, så er disse states true. kompatibilitet
   const [showDate, setShowDate] = useState(Platform.OS === "ios");
   const [showTime, setShowTime] = useState(Platform.OS === "ios");
 
@@ -35,6 +34,7 @@ export default function AddTime({ navigation, route }) {
   const [time, setTime] = useState(new Date());
   const [description, setDescription] = useState("");
 
+  //Gemmer tid
   const handleSave = () => {
     //Grund til clinic er hardcoded, er at det egentligt skal hentes fra den klinik,
     // som er logget ind. Der er bare ikke grund til at implementere det her i testen.
@@ -54,6 +54,7 @@ export default function AddTime({ navigation, route }) {
       );
     } else {
       try {
+        //Find index for den valgte lokaktion. Fra dette findes id og values.
         let locationsIndex = locationsKeys.findIndex((el) => {
           return el === selectedLocation;
         });
@@ -98,7 +99,7 @@ export default function AddTime({ navigation, route }) {
     //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Locations/");
 
-    //Performer queryen
+    //Performer queryen. Kan kun tilføje tider til de lokationer der er tilgængelige med status=1
     query
       .orderByChild("status")
       .equalTo(1)
@@ -111,10 +112,10 @@ export default function AddTime({ navigation, route }) {
       });
   };
   const getCategories = () => {
-    //Selects the table/document table
+    //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Categories/");
 
-    //Performs the query
+    //Performer query'en
     query
       .orderByChild("status")
       .equalTo(1)
@@ -266,8 +267,10 @@ export default function AddTime({ navigation, route }) {
   );
 }
 
+//Komponent til dato og tid
 const DateAndTimeComponent = (props) => {
   const { setShowTime, setShowDate, showDate, showTime, time, date } = props;
+  //Hvis ios, så skal det gøres på denne måde
   if (Platform.OS === "ios") {
     return (
       <View>
@@ -299,6 +302,7 @@ const DateAndTimeComponent = (props) => {
       </View>
     );
   }
+  //Hvis ikke ios, så gøres det således
   return (
     <View>
       <Text style={GlobalStyles.text}>Dato og Tid:</Text>

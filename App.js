@@ -65,6 +65,8 @@ export default function App() {
   );
 }
 
+//Navigation mellem udbyder tidsliste og tidsdetaljer
+
 const StackNavigation = () => {
   return (
     <Stack.Navigator>
@@ -82,6 +84,7 @@ const StackNavigation = () => {
   );
 };
 
+//Navigation mellem tidsliste og tidsdetaljer
 const UserTimeDetailsStackNavigation = () => {
   return (
     <Stack.Navigator>
@@ -98,6 +101,8 @@ const UserTimeDetailsStackNavigation = () => {
     </Stack.Navigator>
   );
 };
+
+//Tab navigation for udbydere
 const TabNavigationSuppliers = () => {
   return (
     <Tab.Navigator>
@@ -143,6 +148,7 @@ const TabNavigationSuppliers = () => {
   );
 };
 
+//Tab navigation for kunde siden
 const TabNavigationUsers = () => {
   return (
     <Tab.Navigator>

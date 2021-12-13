@@ -94,12 +94,12 @@ export default function Locations({ navigation, route }) {
     firebase.database().ref(`/Locations/${id}`).remove();
     alert("Lokationen er nu slettet.");
   };
-  //Array with all the objects from the query
+  //Array med all objekterne fra querien
   const locationsArray = locations ? Object.values(locations) : false;
-  //Array with the keys (id) to the the objects above
+  //Array med keys (id) for objekterne ovenfor
   const locationsKeys = locations ? Object.keys(locations) : false;
 
-  //Render item required for flatlist. Shows how to render each item in the list.
+  //Render item nødvendig for flatlist. Viser hvordan renderingen af hvert item i listen skal være
   const renderItem = ({ item, index }) => {
     return (
       <View style={GlobalStyles.listItem}>
@@ -115,7 +115,7 @@ export default function Locations({ navigation, route }) {
       </View>
     );
   };
-  //Hvis ikke der er givet tilladelse til lokation
+  //Hvis ikke der er givet tilladelse til lokation. Nødvendig pga. pakken, der skal konvertere til koordinatsæt.
   if (!accessGranted){
     return(
       <SafeAreaView style={GlobalStyles.container}>

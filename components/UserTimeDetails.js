@@ -13,10 +13,11 @@ export default function UserTimeDetails({ route, navigation }) {
     let queryCat = firebase
       .database()
       .ref(`/Categories/${route.params.time.category}`);
-
+    //Performer querien
     queryCat.on("value", (snapshot) => {
       let data = snapshot.val();
       if (data) {
+        //Gemmer kategori data, da denne kun er gemt som id i tiden
         setCategory(data);
       }
     });
@@ -31,7 +32,7 @@ export default function UserTimeDetails({ route, navigation }) {
         <Text style={GlobalStyles.text}>Lokation: {route.params.time.addressString}</Text>
         <Text style={GlobalStyles.text}>Normal pris: {route.params.time.price}</Text>
         <Text style={GlobalStyles.text}>Ny pris: {route.params.time.discountPrice}</Text>
-        <Text style={GlobalStyles.text}>Beskrivelse:{" "} {route.params.time.description ? route.params.time.description : null}
+        <Text style={GlobalStyles.text}>Beskrivelse: {route.params.time.description ? route.params.time.description : null}
         </Text>
             <Text style={GlobalStyles.text}>Rating:</Text>
             <Rating readonly startingValue={rating} fractions={1} />

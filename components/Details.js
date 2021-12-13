@@ -36,6 +36,7 @@ const Details = ({ route, navigation }) => {
   }),
     [];
 
+    //Gem funktion. Opdaterer databasen med de nye værdier
   const handleSave = () => {
     if (
       price.length === 0 ||
@@ -73,7 +74,7 @@ const Details = ({ route, navigation }) => {
     }
   };
 
-  //Koden bag selve sletningen af afbudstiden
+  //Koden bag selve sletningen af afbudstiden. 
   const handleDelete = () => {
     const id = route.params.time.id;
     try {
@@ -99,7 +100,7 @@ const Details = ({ route, navigation }) => {
     //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Locations/");
 
-    //Performer queryen
+    //Performer querien
     query
       .orderByChild("status")
       .equalTo(1)
@@ -132,10 +133,10 @@ const Details = ({ route, navigation }) => {
       });
   };
   const getCategories = () => {
-    //Selects the table/document table
+    //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Categories/");
 
-    //Performs the query
+    //Performer querien
     query
       .orderByChild("status")
       .equalTo(1)
@@ -167,7 +168,7 @@ const Details = ({ route, navigation }) => {
         }
       });
   };
-
+  //Hvis ingen data
   if (!route.params) {
     return <Text>No data</Text>;
   }
@@ -179,7 +180,6 @@ const Details = ({ route, navigation }) => {
         <Text style={GlobalStyles.text}>Lokation:</Text>
         <Picker
           onValueChange={(item, index) => {
-            console.log(item);
             setSelectedLocation(item);
           }}
           selectedValue={selectedLocation}
