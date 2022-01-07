@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Alert,
-  Button,
   StyleSheet,
   Pressable,
   Platform,
@@ -15,11 +14,12 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import GlobalStyles from "../styles/GlobalStyles";
 
-/*//Eksempel på brug af styles
-<View style={GlobalStyles.container}></View>
-*/
+import { Button } from "react-native-elements";
+
 export default function AddTime({ navigation, route }) {
   const [date, setNewDate] = useState(new Date());
+
+  //Hvis ios, så er disse states true. kompatibilitet
   const [showDate, setShowDate] = useState(Platform.OS === "ios");
   const [showTime, setShowTime] = useState(Platform.OS === "ios");
 
@@ -34,6 +34,7 @@ export default function AddTime({ navigation, route }) {
   const [time, setTime] = useState(new Date());
   const [description, setDescription] = useState("");
 
+  //Gemmer tid
   const handleSave = () => {
     //Grund til clinic er hardcoded, er at det egentligt skal hentes fra den klinik,
     // som er logget ind. Der er bare ikke grund til at implementere det her i testen.
@@ -53,6 +54,11 @@ export default function AddTime({ navigation, route }) {
       );
     } else {
       try {
+        //Find index for den valgte lokaktion. Fra dette findes id og values.
+        let locationsIndex = locationsKeys.findIndex((el) => {
+          return el === selectedLocation;
+        });
+        let locationValues = locationsArray[locationsIndex];
         firebase
           .database()
           .ref("/Times/")
@@ -67,11 +73,11 @@ export default function AddTime({ navigation, route }) {
             }`,
             price: price,
             discountPrice: discountPrice,
-            location: selectedLocation,
+            location: { id: `${selectedLocation}`, ...locationValues},
             clinic: clinic,
             status: 1,
             description: description,
-            category: selectedCategory,
+            category: `${selectedCategory}`,
           });
         Alert.alert(`Gemt`);
         clearInformation();
@@ -93,30 +99,30 @@ export default function AddTime({ navigation, route }) {
     //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Locations/");
 
-    //Performer queryen
+    //Performer queryen. Kan kun tilføje tider til de lokationer der er tilgængelige med status=1
     query
       .orderByChild("status")
       .equalTo(1)
       .on("value", (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          setSelectedLocation(Object.values(data)[0]);
+          setSelectedLocation(Object.keys(data)[0]);
         }
         setLocations(data);
       });
   };
   const getCategories = () => {
-    //Selects the table/document table
+    //Vælger tabellen/dokument tabellen
     let query = firebase.database().ref("/Categories/");
 
-    //Performs the query
+    //Performer query'en
     query
       .orderByChild("status")
       .equalTo(1)
       .on("value", (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          setSelectedCategory(Object.values(data)[0]);
+          setSelectedCategory(Object.keys(data)[0]);
         }
         setCategories(data);
       });
@@ -136,137 +142,135 @@ export default function AddTime({ navigation, route }) {
   //Array with the keys (id) to the the objects above
   const categoriesKeys = categories ? Object.keys(categories) : false;
   return (
-      <SafeAreaView style={GlobalStyles.container}
-      >
-        {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
+    <SafeAreaView style={GlobalStyles.container}>
+      {/*Date picker aktiveringsknap. Skal vise om den skal vises eller ikke, da det er en pop-up/modal*/}
 
-        <View>
-          <DateAndTimeComponent
-            showDate={showDate}
-            showTime={showTime}
-            setShowDate={setShowDate}
-            setShowTime={setShowTime}
-            time={time}
-            date={date}
-          />
-        </View>
+      <View>
+        <DateAndTimeComponent
+          showDate={showDate}
+          showTime={showTime}
+          setShowDate={setShowDate}
+          setShowTime={setShowTime}
+          time={time}
+          date={date}
+        />
+      </View>
 
-        {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
-        {showDate ? (
-          <DateTimePicker
-            value={date}
-            onChange={(e, chosenDate) => {
-              //Hvis der vælges et input, og ikke trykkes annuller
-              if (chosenDate) {
-                setNewDate(chosenDate);
-              }
-              //Hvis ios, så går den væk. Ellers ikke. På ios vises det anderledes, derfor er det vigtigt.
-              setShowDate(Platform.OS === "ios");
-            }}
-            mode="date"
-          />
-        ) : (
-          <View></View>
-        )}
-        {showTime ? (
-          <DateTimePicker
-            value={time}
-            onChange={(e, chosenTime) => {
-              //Hvis der vælges et input, og ikke trykkes annuller
-              if (chosenTime) {
-                setTime(chosenTime);
-              }
-              setShowTime(Platform.OS === "ios");
-            }}
-            mode="time"
-          />
-        ) : (
-          <View></View>
-        )}
-        <View>
-          <Text style={GlobalStyles.text}>Lokation:</Text>
-          <Picker
-            onValueChange={(item, index) => {
-              setSelectedLocation(item);
-            }}
-            selectedValue={selectedLocation}
-          >
-            {locations ? (
-              locationsArray.map((e, index) => {
-                return (
-                  <Picker.Item
-                    label={e.name}
-                    value={locationsKeys[index]}
-                    key={index}
-                  />
-                );
-              })
-            ) : (
-              <Picker.Item label="..." />
-            )}
-          </Picker>
+      {/* Om datepicker skal vises, og hvordan denne ser ud. Hvis showDate=true, så vis komponentet*/}
+      {showDate ? (
+        <DateTimePicker
+          value={date}
+          onChange={(e, chosenDate) => {
+            //Hvis der vælges et input, og ikke trykkes annuller
+            if (chosenDate) {
+              setNewDate(chosenDate);
+            }
+            //Hvis ios, så går den væk. Ellers ikke. På ios vises det anderledes, derfor er det vigtigt.
+            setShowDate(Platform.OS === "ios");
+          }}
+          mode="date"
+        />
+      ) : (
+        <View></View>
+      )}
+      {showTime ? (
+        <DateTimePicker
+          value={time}
+          onChange={(e, chosenTime) => {
+            //Hvis der vælges et input, og ikke trykkes annuller
+            if (chosenTime) {
+              setTime(chosenTime);
+            }
+            setShowTime(Platform.OS === "ios");
+          }}
+          mode="time"
+        />
+      ) : (
+        <View></View>
+      )}
+      <View>
+        <Text style={GlobalStyles.text}>Lokation:</Text>
+        <Picker
+          onValueChange={(item, index) => {
+            setSelectedLocation(item);
+          }}
+          selectedValue={selectedLocation}
+        >
+          {locations ? (
+            locationsArray.map((e, index) => {
+              return (
+                <Picker.Item
+                  label={e.name}
+                  value={locationsKeys[index]}
+                  key={index}
+                />
+              );
+            })
+          ) : (
+            <Picker.Item label="..." />
+          )}
+        </Picker>
+      </View>
+      <View>
+        <Text style={GlobalStyles.text}>Kategori:</Text>
+        <Picker
+          onValueChange={(item, index) => {
+            setSelectedCategory(item);
+          }}
+          selectedValue={selectedCategory}
+        >
+          {categories ? (
+            categoriesArray.map((e, index) => {
+              return (
+                <Picker.Item
+                  label={e.name}
+                  value={categoriesKeys[index]}
+                  key={index}
+                />
+              );
+            })
+          ) : (
+            <Picker.Item label="..." />
+          )}
+        </Picker>
+      </View>
+      <View>
+        <Text style={GlobalStyles.text}>Normal pris:</Text>
+        <TextInput
+          value={price}
+          onChangeText={(e) => {
+            setPrice(e);
+          }}
+          placeholder="Indsæt pris før rabat..."
+        />
+        <Text style={GlobalStyles.text}>Rabat pris:</Text>
+        <TextInput
+          value={discountPrice}
+          onChangeText={(e) => {
+            setDiscountPrice(e);
+          }}
+          placeholder="Indsæt pris efter rabat..."
+        />
+      </View>
+      <View>
+        <Text style={GlobalStyles.text}>Beskrivelse:</Text>
+        <TextInput
+          value={description}
+          onChangeText={(e) => {
+            setDescription(e);
+          }}
+          placeholder="Indsæt eventuelt en beskrivelse..."
+        />
+      <Button title="Gem" onPress={() => handleSave()} color="red" />
         </View>
-        <View>
-          <Text style={GlobalStyles.text}>Kategori:</Text>
-          <Picker
-            onValueChange={(item, index) => {
-              setSelectedCategory(item);
-            }}
-            selectedValue={selectedCategory}
-          >
-            {categories ? (
-              categoriesArray.map((e, index) => {
-                return (
-                  <Picker.Item
-                    label={e.name}
-                    value={categoriesKeys[index]}
-                    key={index}
-                  />
-                );
-              })
-            ) : (
-              <Picker.Item label="..." />
-            )}
-          </Picker>
-        </View>
-        <View>
-          <Text style={GlobalStyles.text}>Normal pris:</Text>
-          <TextInput
-            value={price}
-            onChangeText={(e) => {
-              setPrice(e);
-            }}
-            placeholder="Indsæt pris før rabat..."
-          />
-          <Text style={GlobalStyles.text}>Rabat pris:</Text>
-          <TextInput
-            value={discountPrice}
-            onChangeText={(e) => {
-              setDiscountPrice(e);
-            }}
-            placeholder="Indsæt pris efter rabat..."
-          />
-        </View>
-        <View>
-          <Text style={GlobalStyles.text}>Beskrivelse:</Text>
-          <TextInput
-            value={description}
-            onChangeText={(e) => {
-              setDescription(e);
-            }}
-            placeholder="Indsæt eventuelt en beskrivelse..."
-          />
-        </View>
-
-          <Button 
-          title="Gem" onPress={() => handleSave()} color="#333"/>
-
-      </SafeAreaView>
+     </SafeAreaView>
   );
 }
 
+//Komponent til dato og tid
 const DateAndTimeComponent = (props) => {
   const { setShowTime, setShowDate, showDate, showTime, time, date } = props;
+  //Hvis ios, så skal det gøres på denne måde
   if (Platform.OS === "ios") {
     return (
       <View>
@@ -298,6 +302,7 @@ const DateAndTimeComponent = (props) => {
       </View>
     );
   }
+  //Hvis ikke ios, så gøres det således
   return (
     <View>
       <Text style={GlobalStyles.text}>Dato og Tid:</Text>
@@ -310,7 +315,7 @@ const DateAndTimeComponent = (props) => {
         onPress={() => {
           setShowDate(true);
         }}
-        style={GlobalStyles.button}
+        style={GlobalStyles.pickerButton}
       >
         <Text style={GlobalStyles.buttonText}>Vælg Dato</Text>
       </Pressable>
@@ -323,40 +328,10 @@ const DateAndTimeComponent = (props) => {
         onPress={() => {
           setShowTime(true);
         }}
-        style={GlobalStyles.button}
+        style={GlobalStyles.pickerButton}
       >
         <Text style={GlobalStyles.buttonText}>Vælg Tid</Text>
       </Pressable>
     </View>
   );
 };
-
-/*//Flyttet til GlobalStyles, men slettes først når det virker!
-const styles = StyleSheet.create({
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "40%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    elevation: 3,
-    backgroundColor: "navy",
-    borderRadius: 10,
-    height: "25%",
-    flex: 2,
-  },
-  buttonTXT: {
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: "bold",
-    letterSpacing: 0.25,
-    color: "white",
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 21,
-    letterSpacing: 0.25,
-    fontWeight: "bold",
-  },
-});
-*/

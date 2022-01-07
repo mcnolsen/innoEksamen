@@ -11,6 +11,7 @@ import { Ionicons } from "react-native-vector-icons";
 import Locations from "./components/Locations";
 import TimeListUsers from "./components/TimeListUsers";
 import Details from "./components/Details";
+import UserTimeDetails from "./components/UserTimeDetails";
 
 //For stack navigator. Ved ikke om vi vil anvende dette.
 import { createStackNavigator } from "@react-navigation/stack";
@@ -21,33 +22,87 @@ const Tab = createBottomTabNavigator();
 import { createDrawerNavigator } from "@react-navigation/drawer";
 const Drawer = createDrawerNavigator();
 
+//Ui
+import { ThemeProvider } from "react-native-elements";
+const theme = {
+  Button: {
+    color: "#fff",
+  },
+  Slider: {
+    thumbStyle: {
+      height: 20,
+      width: 20,
+      backgroundColor: "white",
+    },
+  },
+  CheckBox: {
+    containerStyle: {
+      backgroundColor: "transparent",
+      borderWidth: 0,
+    },
+  },
+};
 export default function App() {
   return (
-    <NavigationContainer>
-      {/* swipeEdgeWidth: 0, for at forhindre at menuen kan aktiveres ved swipes */}
-      <Drawer.Navigator
-        initialRouteName="HomeScreen"
-        screenOptions={{
-          swipeEdgeWidth: 0,
-        }}
-      >
-        <Drawer.Screen name="Hjem" component={HomeScreen} />
-        <Drawer.Screen name="Udbyder Menu" component={TabNavigationSuppliers} />
-        <Drawer.Screen name="Bruger Menu" component={TabNavigationUsers} />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        {/* swipeEdgeWidth: 0, for at forhindre at menuen kan aktiveres ved swipes */}
+        <Drawer.Navigator
+          initialRouteName="HomeScreen"
+          screenOptions={{
+            swipeEdgeWidth: 0,
+          }}
+        >
+          <Drawer.Screen name="Hjem" component={HomeScreen} />
+          <Drawer.Screen
+            name="Udbyder Menu"
+            component={TabNavigationSuppliers}
+          />
+          <Drawer.Screen name="Bruger Menu" component={TabNavigationUsers} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
+
+//Navigation mellem udbyder tidsliste og tidsdetaljer
 
 const StackNavigation = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="TimeList" component={TimeList} options={{title: null, headerShown: false}} />
-        <Stack.Screen name="Details" component={Details} options={{title:'Ændre detaljer'}} />
+      <Stack.Screen
+        name="TimeList"
+        component={TimeList}
+        options={{ title: null, headerShown: false }}
+      />
+      <Stack.Screen
+        name="Details"
+        component={Details}
+        options={{ title: "Ændre detaljer" }}
+      />
     </Stack.Navigator>
   );
 };
 
+//Navigation mellem tidsliste og tidsdetaljer
+const UserTimeDetailsStackNavigation = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="UserTimeList"
+        component={TimeListUsers}
+        options={{ title: null, headerShown: false }}
+      />
+      <Stack.Screen
+        name="UserTimeDetails"
+        component={UserTimeDetails}
+        options={{ title: "Tilbage" }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+//Tab navigation for udbydere
 const TabNavigationSuppliers = () => {
   return (
     <Tab.Navigator>
@@ -93,6 +148,7 @@ const TabNavigationSuppliers = () => {
   );
 };
 
+//Tab navigation for kunde siden
 const TabNavigationUsers = () => {
   return (
     <Tab.Navigator>
@@ -100,7 +156,7 @@ const TabNavigationUsers = () => {
        */}
       <Tab.Screen
         name="TimeListUsers"
-        component={TimeListUsers}
+        component={UserTimeDetailsStackNavigation}
         options={{
           title: "Tidsliste",
           tabBarIcon: () => <Ionicons name="calendar" size={20} />,

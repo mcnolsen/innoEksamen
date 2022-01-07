@@ -28,6 +28,8 @@ export default function TimeList({ navigation }) {
   const [missingLocations, setMissingLocations] = useState([]);
 
   useEffect(() => {
+
+    //Anmoder om lokations adgang
     const requestLocationAccess = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -71,8 +73,6 @@ export default function TimeList({ navigation }) {
             setTimes(dataDistance);
           }
           setDidSearch(true);
-
-
         });
     }
   }),
@@ -93,7 +93,33 @@ export default function TimeList({ navigation }) {
         </SafeAreaView>
       );
     }
-
+    const findLocationDetails = (location_id) => {
+      //Leder efter, om der allerede er data for en lokation med dette id, i de lokationer, som ikke automatisk bliver gemt i tids objektet. (OBS: Outdated. Lokationsdetaljer gemmes nu i tidsobjektet)
+      let knownMissingLocation = missingLocations.find((el) => {
+        return el.id === location_id
+      });
+      //Hvis den er blevet søgt på 1 gang, så findes den i missingLocations. Derfor, behøver vi ikke at lave query igen, så vi sparer ressourcer.
+      if (knownMissingLocation) {
+        return knownMissingLocation
+      } else {
+        //Finder locations
+        let queryLocation = firebase.database().ref(`/Locations/${location_id}`);
+        queryLocation.once("value", (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            let missingLocationToAdd = {id: location_id, ...data
+            };
+            //Gemmer i missingLocations staten
+            let newMissingLocations = [...missingLocations, missingLocationToAdd]
+            setMissingLocations(newMissingLocations);
+          }
+        });
+        let knownMissingLocationAgain = missingLocations.find((el) => {
+          return el.id === location_id
+        });
+        return knownMissingLocationAgain
+      }
+    };
   //Render item required for flatlist. Shows how to render each item in the list.
   const renderItem = ({ item, index }) => {
     const date = new Date(item.date);
@@ -106,7 +132,6 @@ export default function TimeList({ navigation }) {
       }
     }
     //Hvis der er en dato (tidligere indtastet data, har ikke dato. Derfor dette, så der ikke opstår fejl)
-    if (item.date) {
       return (
         <SafeAreaView style={GlobalStyles.container}>
           <Text>{`Tid: Kl. ${item.time}, d. ${date.getDate()}/${
@@ -118,39 +143,22 @@ export default function TimeList({ navigation }) {
           }. Udbyder: ${item.clinic}. Pris: ${item.price}. Distance: ${
             item.distance ? `${item.distance}m` : `Kan ikke findes.`
           }`}</Text>
-        <View style={GlobalStyles.listButton}>
+        <View style={GlobalStyles.button}>
             <Pressable
         onPress={() => {
             editTime(item, index);
         }}
-        style={GlobalStyles.button}
             ><Text style={GlobalStyles.buttonText}>Ændre</Text>
             </Pressable>
             </View>
             </SafeAreaView>
     );
-    };
-    return (
-      <SafeAreaView style={GlobalStyles.container}>
-        <Text>{`Tid: ${item.time}. Sted: ${item.clinic}, ${
-          location ? location.name : ""
-        }. Pris: ${item.price}`}</Text>
-        <View style={GlobalStyles.button}>
-          <Button
-            title="Ændre"
-            onPress={() => {
-              editTime(item);
-            }}
-          ></Button>
-        </View>
-      </SafeAreaView>
-    );
   };
-  //Confirmation of the booking is required, so to prevent accidental bookings.
+  //Navigation til ændring af tiden.
   const editTime = (item) => {
      navigation.navigate("Details",{time:item})
   };
-  //Hvad der skal ske, hvis der confirmes
+  //Hvad der skal ske, hvis der confirmes. Eventuel start på booking funktionalitet, men bruges ikke lige nu
   const handleConfirm = (item, index) => {
     const id = timesKeys[index];
     const bookingsRef = firebase.database().ref(`/Bookings/`);

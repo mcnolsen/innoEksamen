@@ -33,7 +33,9 @@ export default function Categories({ navigation, route }) {
       Alert.alert("Kategorien er oprettet.");
     }
   };
-  //Bekræftelse af slettelse er nødvendig, så fejl-sletninger ikke sker så ofte.
+  //Bekræftelse af slettelse er nødvendig, så fejl-sletninger ikke sker så ofte. For fremtiden: Enten kun deaktiver ikke i slet kategorien.
+  // Hvis man sletter kategorier der stadigvæk bliver refereret til ved f.eks. tider, så opstår der problemer. Derfor kun deaktiver, eller gør så disse tider
+  // får ændret deres kategori
   const confirmDelete = (item, index) => {
     Alert.alert("Er du sikker?", "Vil du slette denne kategori", [
       { text: "Fortryd", style: "cancel" },
@@ -52,22 +54,22 @@ export default function Categories({ navigation, route }) {
     firebase.database().ref(`/Categories/${id}`).remove();
     alert("Kategorien er nu slettet.");
   };
-  //Array with all the objects from the query
+  //Array med all objekterne fra querien
   const categoriesArray = categories ? Object.values(categories) : false;
-  //Array with the keys (id) to the the objects above
+
+  //Array med keys (id) for objekterne ovenfor
   const categoriesKeys = categories ? Object.keys(categories) : false;
 
-  //Render item required for flatlist. Shows how to render each item in the list.
+  //Render item nødvendig for flatlist. Viser hvordan renderingen af hvert item i listen skal være
   const renderItem = ({ item, index }) => {
     return (
       <View style={GlobalStyles.listItem}>
         <Text>{item.name}</Text>
-        <View style={GlobalStyles.listButton}>
+        <View style={GlobalStyles.button}>
           <Pressable
             onPress={() => {
               confirmDelete(item, index);
             }}
-            style={GlobalStyles.button}
           ><Text style={GlobalStyles.buttonText}>Slet</Text>
           </Pressable>
         </View>

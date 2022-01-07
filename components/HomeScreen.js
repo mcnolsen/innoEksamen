@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, Button, ImageBackground, TouchableOpacity, SafeAreaView, Image, Text,} from 'react-native';
 import GlobalStyles from "../styles/GlobalStyles";
 
+//Velkomst skærm
 function HomeScreen (props) {
     return (
         <ImageBackground style={GlobalStyles.imageContainer} source={require("../assets/homeScreenBack.jpg")}>
